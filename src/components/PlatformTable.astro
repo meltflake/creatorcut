@@ -50,7 +50,7 @@ platforms.forEach(p => p.monetization.forEach(m => allRevenueTypes.add(m.type)))
           <th class="sortable" data-sort="cut-max" style="cursor: pointer; white-space: nowrap;">
             到手最高 ↕
           </th>
-          <th style="white-space: nowrap;">成立</th>
+          <th class="sortable" data-sort="founded" style="cursor: pointer; white-space: nowrap;">成立 ↕</th>
         </tr>
       </thead>
       <tbody>
@@ -64,6 +64,7 @@ platforms.forEach(p => p.monetization.forEach(m => allRevenueTypes.add(m.type)))
               data-cut-min={p.creatorCutMin}
               data-cut-max={p.creatorCutMax}
               data-name={p.name}
+              data-founded={p.foundedYear || 0}
             >
               <td>
                 <a href={`${base}platform/${p.id}`} style="color: var(--green); font-weight: 500;">
@@ -126,9 +127,15 @@ platforms.forEach(p => p.monetization.forEach(m => allRevenueTypes.add(m.type)))
         } else if (sortKey === 'cut-min') {
           valA = parseFloat(a.getAttribute('data-cut-min') || '0');
           valB = parseFloat(b.getAttribute('data-cut-min') || '0');
-        } else {
+        } else if (sortKey === 'cut-max') {
           valA = parseFloat(a.getAttribute('data-cut-max') || '0');
           valB = parseFloat(b.getAttribute('data-cut-max') || '0');
+        } else if (sortKey === 'founded') {
+          valA = parseFloat(a.getAttribute('data-founded') || '0');
+          valB = parseFloat(b.getAttribute('data-founded') || '0');
+        } else {
+          valA = 0;
+          valB = 0;
         }
         return asc ? (valA as number) - (valB as number) : (valB as number) - (valA as number);
       });
