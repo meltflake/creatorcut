@@ -2,25 +2,411 @@
 import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import { platforms } from '../data/platforms/index';
+import { revenueTypeLabels, contentFormLabels } from '../data/types';
+import type { Platform, RevenueType, ContentForm } from '../data/types';
+
+// Build JSON-serializable dataset for client-side use
+const platformsData = platforms.map(p => ({
+  id: p.id,
+  name: p.name,
+  nameEn: p.nameEn || '',
+  type: p.type,
+  foundedYear: p.foundedYear || null,
+  mau: p.mau || '—',
+  contentForms: p.contentForms,
+  creatorCutMin: p.creatorCutMin,
+  creatorCutMax: p.creatorCutMax,
+  pros: p.pros,
+  cons: p.cons,
+  bestFor: p.bestFor,
+  monetization: p.monetization.map(m => ({
+    type: m.type,
+    name: m.name,
+    platformCut: m.platformCut,
+    creatorCut: m.creatorCut,
+    creatorCutMin: m.creatorCutMin,
+    creatorCutMax: m.creatorCutMax,
+    entryCost: m.entryCost || '—',
+    threshold: m.threshold || '—',
+    notes: m.notes || '',
+  })),
+}));
+
+const rtLabels = revenueTypeLabels;
+const cfLabels = contentFormLabels;
+const base = import.meta.env.BASE_URL;
 ---
 
 <Layout title="产品对比 — CreatorCut">
   <Header />
 
-  <main class="py-4 text-center">
-    <h1 style="color: var(--green); font-size: 1.5rem; margin-bottom: 1rem;">
-      $ diff platform_a platform_b
-    </h1>
-    <div is-="box" style="padding: 2rem;">
-      <p style="color: var(--yellow); font-size: 1.2rem; margin-bottom: 0.5rem;">🚧 建设中</p>
-      <p style="color: var(--foreground1); font-size: 0.9rem;">
-        产品对比功能即将上线。你将可以选择 2-3 个产品，并排比较分成数据。
+  <main>
+    <!-- Page Title -->
+    <section class="py-2 text-center">
+      <h1 style="color: var(--green); font-size: 1.5rem; margin-bottom: 0.5rem;">
+        $ diff product_a product_b
+      </h1>
+      <p style="color: var(--foreground2); font-size: 0.85rem;">
+        选择 2-3 个产品，并排比较分成数据、变现方式和创作者收益
       </p>
-      <p style="color: var(--foreground2); font-size: 0.85rem; margin-top: 1rem;">
-        Coming in v0.2
-      </p>
+    </section>
+
+    <!-- Selection UI -->
+    <div is-="box" style="padding: 1rem; margin-bottom: 1.5rem;">
+      <div class="flex items-center justify-between flex-wrap gap-1" style="margin-bottom: 0.75rem;">
+        <h2 style="color: var(--yellow); font-size: 0.95rem; margin: 0; font-family: monospace;">
+          $ select --products  <span id="selection-count" style="color: var(--foreground2);">(0/3)</span>
+        </h2>
+        <button
+          id="btn-clear"
+          style="background: none; border: 1px solid var(--surface1); color: var(--foreground2); padding: 0.25rem 0.75rem; font-family: inherit; font-size: 0.8rem; cursor: pointer; display: none;"
+        >
+          清空选择
+        </button>
+      </div>
+      <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-1">
+      </div>
+    </div>
+
+    <!-- Comparison Results -->
+    <div id="compare-results" style="display: none;">
+      <!-- Overview Table -->
+      <div style="margin-bottom: 2rem;">
+        <h2 style="color: var(--yellow); font-size: 0.95rem; margin-bottom: 0.75rem; font-family: monospace;">
+          $ diff --overview
+        </h2>
+        <div class="table-wrap">
+          <table id="overview-table" style="width: 100%; font-size: 0.85rem;">
+          </table>
+        </div>
+      </div>
+
+      <!-- Revenue Detail Comparison -->
+      <div id="revenue-detail">
+        <h2 style="color: var(--yellow); font-size: 0.95rem; margin-bottom: 0.75rem; font-family: monospace;">
+          $ diff --monetization
+        </h2>
+        <div id="revenue-sections"></div>
+      </div>
+    </div>
+
+    <!-- Empty state -->
+    <div id="compare-empty" style="text-align: center; padding: 2rem; color: var(--foreground2);">
+      <p style="font-size: 0.9rem;">请在上方选择 2-3 个产品开始对比</p>
+      <p style="font-size: 0.8rem; color: var(--surface2);">点击产品卡片进行选择</p>
     </div>
   </main>
 
   <Footer />
 </Layout>
+
+<script define:vars={{ platformsData, rtLabels, cfLabels, base }}>
+  const MAX_SELECTION = 3;
+  const MIN_SELECTION = 2;
+  let selected = new Set();
+
+  // ==================== Render Product Grid ====================
+  function renderGrid() {
+    const grid = document.getElementById('product-grid');
+    grid.innerHTML = platformsData.map(p => {
+      const isSelected = selected.has(p.id);
+      const isDisabled = !isSelected && selected.size >= MAX_SELECTION;
+      return `<div
+        class="product-card ${isSelected ? 'selected' : ''} ${isDisabled ? 'disabled' : ''}"
+        data-id="${p.id}"
+        style="
+          padding: 0.6rem 0.75rem;
+          border: 1px solid ${isSelected ? 'var(--green)' : 'var(--surface1)'};
+          background: ${isSelected ? 'rgba(166, 227, 161, 0.08)' : 'var(--surface0)'};
+          cursor: ${isDisabled ? 'not-allowed' : 'pointer'};
+          opacity: ${isDisabled ? '0.4' : '1'};
+          transition: all 0.15s;
+          position: relative;
+        "
+      >
+        <div class="flex items-center gap-1">
+          <span style="color: ${isSelected ? 'var(--green)' : 'var(--foreground2)'}; font-size: 0.85rem; width: 1.2rem; flex-shrink: 0;">
+            ${isSelected ? '[✓]' : '[ ]'}
+          </span>
+          <div style="min-width: 0;">
+            <span style="color: ${isSelected ? 'var(--green)' : 'var(--foreground1)'}; font-weight: 500; font-size: 0.9rem;">
+              ${p.name}
+            </span>
+            <span style="color: var(--foreground2); font-size: 0.75rem; margin-left: 0.3rem;">
+              ${p.type}
+            </span>
+          </div>
+        </div>
+      </div>`;
+    }).join('');
+
+    // Bind click events
+    grid.querySelectorAll('.product-card:not(.disabled)').forEach(card => {
+      card.addEventListener('click', () => {
+        const id = card.dataset.id;
+        if (selected.has(id)) {
+          selected.delete(id);
+        } else if (selected.size < MAX_SELECTION) {
+          selected.add(id);
+        }
+        updateUI();
+      });
+    });
+  }
+
+  // ==================== Update UI ====================
+  function updateUI() {
+    // Update count
+    document.getElementById('selection-count').textContent = `(${selected.size}/${MAX_SELECTION})`;
+    document.getElementById('selection-count').style.color =
+      selected.size >= MIN_SELECTION ? 'var(--green)' : 'var(--foreground2)';
+
+    // Show/hide clear button
+    document.getElementById('btn-clear').style.display = selected.size > 0 ? 'inline-block' : 'none';
+
+    // Re-render grid
+    renderGrid();
+
+    // Show/hide comparison
+    if (selected.size >= MIN_SELECTION) {
+      renderComparison();
+      document.getElementById('compare-results').style.display = 'block';
+      document.getElementById('compare-empty').style.display = 'none';
+    } else {
+      document.getElementById('compare-results').style.display = 'none';
+      document.getElementById('compare-empty').style.display = 'block';
+    }
+  }
+
+  // ==================== Render Overview Comparison ====================
+  function renderComparison() {
+    const selectedPlatforms = platformsData.filter(p => selected.has(p.id));
+    renderOverviewTable(selectedPlatforms);
+    renderRevenueDetail(selectedPlatforms);
+  }
+
+  function renderOverviewTable(platforms) {
+    const table = document.getElementById('overview-table');
+
+    // Find best creator cut range
+    const bestMax = Math.max(...platforms.map(p => p.creatorCutMax));
+
+    const rows = [
+      {
+        label: '产品名称',
+        values: platforms.map(p =>
+          `<a href="${base}/platform/${p.id}" style="color: var(--green); text-decoration: none; font-weight: 600;">${p.name}</a>`
+        ),
+      },
+      {
+        label: '类型',
+        values: platforms.map(p => `<span style="color: var(--foreground1);">${p.type}</span>`),
+      },
+      {
+        label: '成立年份',
+        values: platforms.map(p => `<span style="color: var(--foreground1);">${p.foundedYear || '—'}</span>`),
+      },
+      {
+        label: 'MAU',
+        values: platforms.map(p => `<span style="color: var(--sky);">${p.mau}</span>`),
+      },
+      {
+        label: '内容形式',
+        values: platforms.map(p =>
+          `<span style="color: var(--foreground1); font-size: 0.8rem;">${p.contentForms.map(f => cfLabels[f] || f).join('、')}</span>`
+        ),
+      },
+      {
+        label: '支持的变现方式',
+        values: platforms.map(p => {
+          const types = [...new Set(p.monetization.map(m => m.type))];
+          return `<span style="color: var(--foreground1); font-size: 0.8rem;">${types.map(t => rtLabels[t] || t).join('、')}</span>`;
+        }),
+      },
+      {
+        label: '创作者到手范围',
+        values: platforms.map(p => {
+          const isBest = p.creatorCutMax === bestMax;
+          const color = isBest ? 'var(--green)' : 'var(--foreground1)';
+          return `<span style="color: ${color}; font-weight: ${isBest ? '600' : '400'};">${p.creatorCutMin}% - ${p.creatorCutMax}%</span>`;
+        }),
+      },
+      {
+        label: '优势',
+        values: platforms.map(p =>
+          `<ul style="margin: 0; padding-left: 1.2rem; color: var(--green); font-size: 0.8rem;">${p.pros.map(x => `<li>${x}</li>`).join('')}</ul>`
+        ),
+      },
+      {
+        label: '劣势',
+        values: platforms.map(p =>
+          `<ul style="margin: 0; padding-left: 1.2rem; color: var(--red); font-size: 0.8rem;">${p.cons.map(x => `<li>${x}</li>`).join('')}</ul>`
+        ),
+      },
+      {
+        label: '适合人群',
+        values: platforms.map(p =>
+          `<span style="color: var(--foreground1); font-size: 0.8rem;">${p.bestFor.join('、')}</span>`
+        ),
+      },
+    ];
+
+    const colWidth = platforms.length === 2 ? '40%' : '28%';
+    const headerColWidth = platforms.length === 2 ? '20%' : '16%';
+
+    table.innerHTML = `
+      <colgroup>
+        <col style="width: ${headerColWidth};" />
+        ${platforms.map(() => `<col style="width: ${colWidth};" />`).join('')}
+      </colgroup>
+      <thead>
+        <tr>
+          <th style="text-align: left; padding: 0.5rem; border-bottom: 1px solid var(--surface1); color: var(--foreground2); font-size: 0.8rem; white-space: nowrap;">对比项</th>
+          ${platforms.map(p => `
+            <th style="text-align: left; padding: 0.5rem; border-bottom: 1px solid var(--surface1); color: var(--green); font-weight: 600; white-space: nowrap;">
+              ${p.name}
+            </th>
+          `).join('')}
+        </tr>
+      </thead>
+      <tbody>
+        ${rows.map(row => `
+          <tr>
+            <td style="padding: 0.5rem; border-bottom: 1px solid var(--surface0); color: var(--foreground2); font-size: 0.8rem; white-space: nowrap; vertical-align: top;">
+              ${row.label}
+            </td>
+            ${row.values.map(v => `
+              <td style="padding: 0.5rem; border-bottom: 1px solid var(--surface0); vertical-align: top;">
+                ${v}
+              </td>
+            `).join('')}
+          </tr>
+        `).join('')}
+      </tbody>
+    `;
+  }
+
+  // ==================== Render Revenue Detail Comparison ====================
+  function renderRevenueDetail(platforms) {
+    const container = document.getElementById('revenue-sections');
+
+    // Collect all revenue types across selected platforms
+    const allTypes = new Set();
+    platforms.forEach(p => {
+      p.monetization.forEach(m => allTypes.add(m.type));
+    });
+
+    // Sort revenue types by label order (same order as revenueTypeLabels keys)
+    const rtOrder = Object.keys(rtLabels);
+    const sortedTypes = [...allTypes].sort((a, b) => rtOrder.indexOf(a) - rtOrder.indexOf(b));
+
+    if (sortedTypes.length === 0) {
+      container.innerHTML = '<p style="color: var(--foreground2);">所选产品暂无变现数据。</p>';
+      return;
+    }
+
+    container.innerHTML = sortedTypes.map(type => {
+      const typeName = rtLabels[type] || type;
+
+      // For each platform, find the matching monetization methods (could be multiple)
+      const platformMethods = platforms.map(p => {
+        const methods = p.monetization.filter(m => m.type === type);
+        return { platform: p, methods };
+      });
+
+      // Find the best creator cut max across all methods for this revenue type
+      let bestCreatorCutMax = -1;
+      platformMethods.forEach(pm => {
+        pm.methods.forEach(m => {
+          if (m.creatorCutMax !== undefined && m.creatorCutMax > bestCreatorCutMax) {
+            bestCreatorCutMax = m.creatorCutMax;
+          }
+        });
+      });
+
+      return `
+        <div style="margin-bottom: 1.5rem;">
+          <h3 style="color: var(--sky); font-size: 0.9rem; margin-bottom: 0.5rem; font-family: monospace;">
+            ┌─ ${typeName}
+          </h3>
+          <div class="table-wrap">
+            <table style="width: 100%; font-size: 0.82rem;">
+              <thead>
+                <tr>
+                  <th style="text-align: left; padding: 0.4rem 0.5rem; border-bottom: 1px solid var(--surface1); color: var(--foreground2); white-space: nowrap;">产品</th>
+                  <th style="text-align: left; padding: 0.4rem 0.5rem; border-bottom: 1px solid var(--surface1); color: var(--foreground2); white-space: nowrap;">变现方式</th>
+                  <th style="text-align: left; padding: 0.4rem 0.5rem; border-bottom: 1px solid var(--surface1); color: var(--foreground2); white-space: nowrap;">平台抽成</th>
+                  <th style="text-align: left; padding: 0.4rem 0.5rem; border-bottom: 1px solid var(--surface1); color: var(--foreground2); white-space: nowrap;">创作者到手</th>
+                  <th style="text-align: left; padding: 0.4rem 0.5rem; border-bottom: 1px solid var(--surface1); color: var(--foreground2); white-space: nowrap;">入门成本</th>
+                  <th style="text-align: left; padding: 0.4rem 0.5rem; border-bottom: 1px solid var(--surface1); color: var(--foreground2); white-space: nowrap;">门槛</th>
+                  <th style="text-align: left; padding: 0.4rem 0.5rem; border-bottom: 1px solid var(--surface1); color: var(--foreground2); white-space: nowrap;">备注</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${platformMethods.map(pm => {
+                  if (pm.methods.length === 0) {
+                    // Platform doesn't support this revenue type
+                    return `<tr>
+                      <td style="padding: 0.4rem 0.5rem; border-bottom: 1px solid var(--surface0); color: var(--foreground1); white-space: nowrap;">${pm.platform.name}</td>
+                      <td colspan="6" style="padding: 0.4rem 0.5rem; border-bottom: 1px solid var(--surface0); color: var(--surface2); font-style: italic;">不支持</td>
+                    </tr>`;
+                  }
+                  return pm.methods.map((m, i) => {
+                    const isBest = m.creatorCutMax !== undefined && m.creatorCutMax === bestCreatorCutMax && platforms.length > 1;
+                    const creatorCutColor = isBest ? 'var(--green)' : 'var(--foreground1)';
+                    const creatorCutWeight = isBest ? '600' : '400';
+                    const rowBg = isBest ? 'background: rgba(166, 227, 161, 0.06);' : '';
+                    return `<tr style="${rowBg}">
+                      ${i === 0 ? `<td style="padding: 0.4rem 0.5rem; border-bottom: 1px solid var(--surface0); color: var(--foreground1); white-space: nowrap;" rowspan="${pm.methods.length}">${pm.platform.name}</td>` : ''}
+                      <td style="padding: 0.4rem 0.5rem; border-bottom: 1px solid var(--surface0); color: var(--foreground1); white-space: nowrap;">${m.name}</td>
+                      <td style="padding: 0.4rem 0.5rem; border-bottom: 1px solid var(--surface0); color: var(--red); white-space: nowrap;">${m.platformCut}</td>
+                      <td style="padding: 0.4rem 0.5rem; border-bottom: 1px solid var(--surface0); color: ${creatorCutColor}; font-weight: ${creatorCutWeight}; white-space: nowrap;">${m.creatorCut}</td>
+                      <td style="padding: 0.4rem 0.5rem; border-bottom: 1px solid var(--surface0); color: ${!m.entryCost || m.entryCost === '免费' || m.entryCost === '—' ? 'var(--green)' : 'var(--peach)'}; white-space: nowrap; font-size: 0.8rem;">${m.entryCost}</td>
+                      <td style="padding: 0.4rem 0.5rem; border-bottom: 1px solid var(--surface0); color: var(--foreground2); font-size: 0.8rem;">${m.threshold}</td>
+                      <td style="padding: 0.4rem 0.5rem; border-bottom: 1px solid var(--surface0); color: var(--foreground2); font-size: 0.78rem; max-width: 20rem;">${m.notes}</td>
+                    </tr>`;
+                  }).join('');
+                }).join('')}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  // ==================== Event Binding ====================
+  document.getElementById('btn-clear').addEventListener('click', () => {
+    selected.clear();
+    updateUI();
+  });
+
+  // Initial render
+  renderGrid();
+</script>
+
+<style is:global>
+  .product-card:not(.disabled):hover {
+    border-color: var(--green) !important;
+    background: rgba(166, 227, 161, 0.04) !important;
+  }
+
+  #overview-table th,
+  #overview-table td {
+    padding: 0.5rem;
+    line-height: 1.6;
+  }
+
+  #overview-table tr:hover td {
+    background: var(--surface0);
+  }
+
+  #revenue-sections table tr:hover td {
+    background: var(--surface0);
+  }
+
+  #revenue-sections table th {
+    font-weight: 500;
+  }
+</style>
