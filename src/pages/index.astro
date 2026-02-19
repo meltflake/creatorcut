@@ -17,6 +17,7 @@ const revenueTypeOrder: RevenueType[] = [
   'course',
   'newsletter',
   'affiliate',
+  'crowdfunding',
   'digital-goods',
 ];
 
@@ -27,6 +28,22 @@ const activeRevenueTypes = revenueTypeOrder.filter(rt =>
 
 // Count total monetization methods
 const totalMethods = platforms.reduce((sum, p) => sum + p.monetization.length, 0);
+
+// Region counts
+const cnPlatforms = platforms.filter(p => p.region === 'cn');
+const globalPlatforms = platforms.filter(p => p.region === 'global');
+const cnCount = cnPlatforms.length;
+const globalCount = globalPlatforms.length;
+const cnMethods = cnPlatforms.reduce((sum, p) => sum + p.monetization.length, 0);
+const globalMethods = globalPlatforms.reduce((sum, p) => sum + p.monetization.length, 0);
+
+// Active revenue types per region
+const activeRevenueTypesCn = revenueTypeOrder.filter(rt =>
+  cnPlatforms.some(p => p.monetization.some(m => m.type === rt))
+);
+const activeRevenueTypesGlobal = revenueTypeOrder.filter(rt =>
+  globalPlatforms.some(p => p.monetization.some(m => m.type === rt))
+);
 ---
 
 <Layout>
@@ -39,12 +56,12 @@ const totalMethods = platforms.reduce((sum, p) => sum + p.monetization.length, 0
         &gt; CreatorCut_
       </h1>
       <p style="color: var(--foreground1); font-size: 1.1rem; max-width: 40rem; margin: 0 auto;">
-        创作者分成数据库 — 系统整理中国内容产品的变现方式、分成比例、入驻门槛
+        创作者分成数据库 — 系统整理全球内容产品的变现方式、分成比例、入驻门槛
       </p>
       <p style="color: var(--foreground2); font-size: 0.85rem; margin-top: 0.5rem;">
-        数据为王，来源透明，保持中立。帮助创作者做出更明智的选择。
+        数据为王，来源透明，保持中立。覆盖中国 + 海外主流创作者产品，帮助创作者做出更明智的选择。
       </p>
-      <p style="color: var(--sky); font-size: 0.85rem; margin-top: 0.5rem;">
+      <p id="coverage-text" style="color: var(--sky); font-size: 0.85rem; margin-top: 0.5rem;">
         覆盖 {platforms.length} 个产品，{totalMethods} 种变现方式
       </p>
     </section>
@@ -59,9 +76,14 @@ const totalMethods = platforms.reduce((sum, p) => sum + p.monetization.length, 0
           <li style="margin-bottom: 0.3rem;">→ 微信公众号付费阅读/赞赏 <span style="color: var(--green);">0% 抽成</span>，创作者全拿；爱发电仅 <span style="color: var(--green);">6% 抽成</span>，全库最低</li>
           <li style="margin-bottom: 0.3rem;">→ 小红书蒲公英商单 <span style="color: var(--green);">博主端 0 抽佣</span>（品牌方付费），行业独一无二</li>
           <li style="margin-bottom: 0.3rem;">→ 小鹅通额度内 <span style="color: var(--green);">0 抽成</span>，但需年费 6,800-25,800 元；知识星球企业版仅 <span style="color: var(--green);">5-10%</span></li>
-          <li style="margin-bottom: 0.3rem;">→ 喜马拉雅付费专辑创作者仅拿 <span style="color: var(--red);">20-40%</span>，15 个产品中分成最低</li>
+          <li style="margin-bottom: 0.3rem;">→ 喜马拉雅付费专辑创作者仅拿 <span style="color: var(--red);">20-40%</span>，15 个中国产品中分成最低</li>
           <li style="margin-bottom: 0.3rem;">→ B 站广告分成从 40% <span style="color: var(--red);">降至 25%</span>；小报童实际到手 ~79%（15% 服务费 + ~6% 提现费）</li>
-          <li style="margin-bottom: 0.3rem;">→ 覆盖 <span style="color: var(--sky);">15 个产品、{totalMethods} 种变现方式</span>，数据全部标注来源</li>
+          <li style="margin-bottom: 0.5rem; border-top: 1px solid var(--surface1); padding-top: 0.5rem; color: var(--sky); font-size: 0.8rem;">🌍 海外产品</li>
+          <li style="margin-bottom: 0.3rem;">→ Ko-fi 打赏 <span style="color: var(--green);">0% 平台费</span>（免费版），Ghost 自托管 <span style="color: var(--green);">0% 抽成</span></li>
+          <li style="margin-bottom: 0.3rem;">→ YouTube 长视频广告 <span style="color: var(--green);">55% 到手</span>，Shorts 仅 <span style="color: var(--peach);">45%</span></li>
+          <li style="margin-bottom: 0.3rem;">→ Patreon 2025 年 8 月起新创作者统一 <span style="color: var(--peach);">10% 平台费</span></li>
+          <li style="margin-bottom: 0.3rem;">→ Apple Podcasts 订阅首年 <span style="color: var(--red);">30% 抽成</span>，次年降至 <span style="color: var(--peach);">15%</span></li>
+          <li style="margin-bottom: 0.3rem;">→ 覆盖 <span style="color: var(--sky);">{platforms.length} 个产品（{cnCount} 🇨🇳 + {globalCount} 🌍）、{totalMethods} 种变现方式</span>，数据全部标注来源</li>
         </ul>
       </div>
     </section>
@@ -72,12 +94,62 @@ const totalMethods = platforms.reduce((sum, p) => sum + p.monetization.length, 0
         $ ls --group-by=revenue_type
       </h2>
 
-      <!-- Quick nav -->
-      <div class="flex flex-wrap gap-1 mb-3" style="align-items: center;">
+      <!-- Region filter tabs -->
+      <div class="flex flex-wrap gap-1 mb-2" style="align-items: center;">
+        <span style="color: var(--foreground2); font-size: 0.85rem;">地区：</span>
+        <button
+          class="region-tab active"
+          data-region="all"
+          style="font-size: 0.8rem; padding: 0.3rem 0.75rem; border: 1px solid var(--green); color: var(--base); background: var(--green); cursor: pointer; font-family: inherit; transition: all 0.15s;"
+        >
+          全部 ({platforms.length})
+        </button>
+        <button
+          class="region-tab"
+          data-region="cn"
+          style="font-size: 0.8rem; padding: 0.3rem 0.75rem; border: 1px solid var(--surface1); color: var(--foreground1); background: none; cursor: pointer; font-family: inherit; transition: all 0.15s;"
+        >
+          🇨🇳 中国 ({cnCount})
+        </button>
+        <button
+          class="region-tab"
+          data-region="global"
+          style="font-size: 0.8rem; padding: 0.3rem 0.75rem; border: 1px solid var(--surface1); color: var(--foreground1); background: none; cursor: pointer; font-family: inherit; transition: all 0.15s;"
+        >
+          🌍 海外 ({globalCount})
+        </button>
+      </div>
+
+      <!-- Quick nav (per region) -->
+      <div id="nav-all" class="region-content flex flex-wrap gap-1 mb-3" data-region="all" style="align-items: center;">
         <span style="color: var(--foreground2); font-size: 0.85rem;">跳转：</span>
         {activeRevenueTypes.map(rt => (
           <a 
-            href={`#rt-${rt}`}
+            href={`#rt-all-${rt}`}
+            style="font-size: 0.75rem; padding: 0.2rem 0.5rem; border: 1px solid var(--surface1); color: var(--foreground1); text-decoration: none; border-radius: 2px;"
+            class="nav-btn"
+          >
+            {revenueTypeLabels[rt]}
+          </a>
+        ))}
+      </div>
+      <div id="nav-cn" class="region-content flex flex-wrap gap-1 mb-3" data-region="cn" style="align-items: center; display: none;">
+        <span style="color: var(--foreground2); font-size: 0.85rem;">跳转：</span>
+        {activeRevenueTypesCn.map(rt => (
+          <a 
+            href={`#rt-cn-${rt}`}
+            style="font-size: 0.75rem; padding: 0.2rem 0.5rem; border: 1px solid var(--surface1); color: var(--foreground1); text-decoration: none; border-radius: 2px;"
+            class="nav-btn"
+          >
+            {revenueTypeLabels[rt]}
+          </a>
+        ))}
+      </div>
+      <div id="nav-global" class="region-content flex flex-wrap gap-1 mb-3" data-region="global" style="align-items: center; display: none;">
+        <span style="color: var(--foreground2); font-size: 0.85rem;">跳转：</span>
+        {activeRevenueTypesGlobal.map(rt => (
+          <a 
+            href={`#rt-global-${rt}`}
             style="font-size: 0.75rem; padding: 0.2rem 0.5rem; border: 1px solid var(--surface1); color: var(--foreground1); text-decoration: none; border-radius: 2px;"
             class="nav-btn"
           >
@@ -86,11 +158,32 @@ const totalMethods = platforms.reduce((sum, p) => sum + p.monetization.length, 0
         ))}
       </div>
 
-      {activeRevenueTypes.map((rt, i) => (
-        <div id={`rt-${rt}`}>
-          <RevenueTable revenueType={rt} tableIndex={i} />
-        </div>
-      ))}
+      <!-- All platforms tables -->
+      <div id="tables-all" class="region-content" data-region="all">
+        {activeRevenueTypes.map((rt, i) => (
+          <div id={`rt-all-${rt}`}>
+            <RevenueTable revenueType={rt} tableIndex={i} region="all" />
+          </div>
+        ))}
+      </div>
+
+      <!-- CN platforms tables -->
+      <div id="tables-cn" class="region-content" data-region="cn" style="display: none;">
+        {activeRevenueTypesCn.map((rt, i) => (
+          <div id={`rt-cn-${rt}`}>
+            <RevenueTable revenueType={rt} tableIndex={i} region="cn" />
+          </div>
+        ))}
+      </div>
+
+      <!-- Global platforms tables -->
+      <div id="tables-global" class="region-content" data-region="global" style="display: none;">
+        {activeRevenueTypesGlobal.map((rt, i) => (
+          <div id={`rt-global-${rt}`}>
+            <RevenueTable revenueType={rt} tableIndex={i} region="global" />
+          </div>
+        ))}
+      </div>
 
       <p style="color: var(--foreground2); font-size: 0.8rem; margin-top: 0.75rem;">
         * 所有分成比例均为税前（不含税）。点击表头可排序，点击产品名称查看详情。
@@ -100,6 +193,43 @@ const totalMethods = platforms.reduce((sum, p) => sum + p.monetization.length, 0
 
   <Footer />
 </Layout>
+
+<script define:vars={{ totalMethods, cnCount, globalCount, cnMethods, globalMethods, totalPlatforms: platforms.length }}>
+  // Region tab switching
+  const regionTabs = document.querySelectorAll('.region-tab');
+  const regionContents = document.querySelectorAll('.region-content');
+  const coverageText = document.getElementById('coverage-text');
+
+  const coverageMap = {
+    all: `覆盖 ${totalPlatforms} 个产品，${totalMethods} 种变现方式`,
+    cn: `覆盖 ${cnCount} 个中国产品，${cnMethods} 种变现方式`,
+    global: `覆盖 ${globalCount} 个海外产品，${globalMethods - 0} 种变现方式`,
+  };
+
+  regionTabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      const region = tab.getAttribute('data-region');
+      
+      // Update tab styles
+      regionTabs.forEach(t => {
+        t.style.border = '1px solid var(--surface1)';
+        t.style.color = 'var(--foreground1)';
+        t.style.background = 'none';
+      });
+      tab.style.border = '1px solid var(--green)';
+      tab.style.color = 'var(--base)';
+      tab.style.background = 'var(--green)';
+      
+      // Show/hide content
+      regionContents.forEach(el => {
+        el.style.display = el.getAttribute('data-region') === region ? '' : 'none';
+      });
+
+      // Update coverage text
+      coverageText.textContent = coverageMap[region] || coverageMap.all;
+    });
+  });
+</script>
 
 <script>
   // Sort logic for all revenue tables
@@ -113,7 +243,8 @@ const totalMethods = platforms.reduce((sum, p) => sum + p.monetization.length, 0
       sortDir[dirKey] = !sortDir[dirKey];
       const asc = sortDir[dirKey];
       
-      const tbody = document.querySelector(`#${tableId} tbody`)!;
+      const tbody = document.querySelector(`#${tableId} tbody`);
+      if (!tbody) return;
       const rows = Array.from(tbody.querySelectorAll('.revenue-row'));
       
       rows.sort((a, b) => {
@@ -142,6 +273,10 @@ const totalMethods = platforms.reduce((sum, p) => sum + p.monetization.length, 0
 
 <style is:global>
   .nav-btn:hover {
+    border-color: var(--green) !important;
+    color: var(--green) !important;
+  }
+  .region-tab:hover {
     border-color: var(--green) !important;
     color: var(--green) !important;
   }

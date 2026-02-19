@@ -11,6 +11,7 @@ const platformsData = platforms.map(p => ({
   id: p.id,
   name: p.name,
   nameEn: p.nameEn || '',
+  region: p.region,
   type: p.type,
   foundedYear: p.foundedYear || null,
   mau: p.mau || '—',
@@ -48,7 +49,7 @@ const base = import.meta.env.BASE_URL;
         $ diff product_a product_b
       </h1>
       <p style="color: var(--foreground2); font-size: 0.85rem;">
-        选择 2-3 个产品，并排比较分成数据、变现方式和创作者收益
+        选择 2-3 个产品，并排比较全球创作者产品的分成数据、变现方式和创作者收益
       </p>
     </section>
 
@@ -64,6 +65,13 @@ const base = import.meta.env.BASE_URL;
         >
           清空选择
         </button>
+      </div>
+      <!-- Region filter -->
+      <div class="flex flex-wrap gap-1" style="margin-bottom: 0.75rem; align-items: center;">
+        <span style="color: var(--foreground2); font-size: 0.8rem;">地区：</span>
+        <button class="compare-region-tab active" data-region="all" style="font-size: 0.75rem; padding: 0.2rem 0.6rem; border: 1px solid var(--green); color: var(--base); background: var(--green); cursor: pointer; font-family: inherit; transition: all 0.15s;">全部</button>
+        <button class="compare-region-tab" data-region="cn" style="font-size: 0.75rem; padding: 0.2rem 0.6rem; border: 1px solid var(--surface1); color: var(--foreground1); background: none; cursor: pointer; font-family: inherit; transition: all 0.15s;">🇨🇳 中国</button>
+        <button class="compare-region-tab" data-region="global" style="font-size: 0.75rem; padding: 0.2rem 0.6rem; border: 1px solid var(--surface1); color: var(--foreground1); background: none; cursor: pointer; font-family: inherit; transition: all 0.15s;">🌍 海外</button>
       </div>
       <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-1">
       </div>
@@ -105,11 +113,15 @@ const base = import.meta.env.BASE_URL;
   const MAX_SELECTION = 3;
   const MIN_SELECTION = 2;
   let selected = new Set();
+  let currentRegion = 'all';
 
   // ==================== Render Product Grid ====================
   function renderGrid() {
     const grid = document.getElementById('product-grid');
-    grid.innerHTML = platformsData.map(p => {
+    const filtered = currentRegion === 'all' 
+      ? platformsData 
+      : platformsData.filter(p => p.region === currentRegion);
+    grid.innerHTML = filtered.map(p => {
       const isSelected = selected.has(p.id);
       const isDisabled = !isSelected && selected.size >= MAX_SELECTION;
       return `<div
@@ -382,11 +394,50 @@ const base = import.meta.env.BASE_URL;
     updateUI();
   });
 
+  // Region tab switching for compare page
+  document.querySelectorAll('.compare-region-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      currentRegion = tab.getAttribute('data-region');
+      // Update tab styles
+      document.querySelectorAll('.compare-region-tab').forEach(t => {
+        t.style.border = '1px solid var(--surface1)';
+        t.style.color = 'var(--foreground1)';
+        t.style.background = 'none';
+      });
+      tab.style.border = '1px solid var(--green)';
+      tab.style.color = 'var(--base)';
+      tab.style.background = 'var(--green)';
+      // Re-render grid (preserves selections)
+      renderGrid();
+      // Re-bind grid events
+      bindGridEvents();
+    });
+  });
+
+  function bindGridEvents() {
+    const grid = document.getElementById('product-grid');
+    grid.querySelectorAll('.product-card:not(.disabled)').forEach(card => {
+      card.addEventListener('click', () => {
+        const id = card.dataset.id;
+        if (selected.has(id)) {
+          selected.delete(id);
+        } else if (selected.size < MAX_SELECTION) {
+          selected.add(id);
+        }
+        updateUI();
+      });
+    });
+  }
+
   // Initial render
   renderGrid();
 </script>
 
 <style is:global>
+  .compare-region-tab:hover {
+    border-color: var(--green) !important;
+    color: var(--green) !important;
+  }
   .product-card:not(.disabled):hover {
     border-color: var(--green) !important;
     background: rgba(166, 227, 161, 0.04) !important;

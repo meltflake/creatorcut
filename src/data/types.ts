@@ -35,6 +35,12 @@ export const contentFormLabels: Record<ContentForm, string> = {
   livestream: '直播',
 };
 
+export const regionLabels: Record<string, string> = {
+  all: '全部',
+  cn: '中国',
+  global: '海外',
+};
+
 export interface DataSource {
   type: 'official' | 'media' | 'estimate';
   name: string;

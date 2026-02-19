@@ -6,20 +6,26 @@ import type { RevenueType, MonetizationMethod, Platform } from '../data/types';
 interface Props {
   revenueType: RevenueType;
   tableIndex: number;
+  region?: 'cn' | 'global' | 'all';
 }
 
-const { revenueType, tableIndex } = Astro.props;
+const { revenueType, tableIndex, region = 'all' } = Astro.props;
 const base = import.meta.env.BASE_URL;
 const label = revenueTypeLabels[revenueType];
 
-// Collect all monetization methods of this revenue type across platforms
+// Filter platforms by region
+const filteredPlatforms = region === 'all' 
+  ? platforms 
+  : platforms.filter(p => p.region === region);
+
+// Collect all monetization methods of this revenue type across filtered platforms
 interface TableRow {
   platform: Platform;
   method: MonetizationMethod;
 }
 
 const rows: TableRow[] = [];
-platforms.forEach(p => {
+filteredPlatforms.forEach(p => {
   p.monetization.forEach(m => {
     if (m.type === revenueType) {
       rows.push({ platform: p, method: m });
@@ -44,23 +50,57 @@ function entryCostColor(cost: string | undefined): string {
   return 'var(--peach)';
 }
 
-// One-line insight per revenue type (generated from actual data)
-const revenueInsights: Record<string, string> = {
-  subscription: '微信公众号 0% 抽成最友好；喜马拉雅 60-80% 抽成最重',
-  tipping: '微信公众号/知乎赞赏 0% 抽成；快手打赏 70% 到手最高',
-  ecommerce: '技术服务费普遍 1-5%，核心差异在商家设定的佣金比例',
-  ads: 'B站广告分成 2025 年从 40% 降至 25%，创作激励上限 2000 元/月',
-  sponsorship: '小红书蒲公英博主端 0 抽佣，品牌方承担全部服务费',
-  course: '小鹅通额度内 0 抽成但需年费；得到邀约制 ~50% 分成',
-  newsletter: '小报童 15% 服务费 + ~6% 提现费，实际到手约 79%',
-  affiliate: '小报童分销佣金 0 抽成，作者自设比例全额到账',
-  'digital-goods': '爱发电仅 6% 抽成；得到电子书 ~70% 到手',
-};
-const insight = revenueInsights[revenueType] || '';
+// Region flag emoji (only shown in 'all' mode)
+function regionFlag(p: Platform): string {
+  if (region !== 'all') return '';
+  return p.region === 'cn' ? '🇨🇳' : '🌍';
+}
 
-const tableId = `revenue-table-${tableIndex}`;
+// One-line insight per revenue type
+const revenueInsights: Record<string, Record<string, string>> = {
+  all: {
+    subscription: '微信公众号 0% 抽成最友好；Ghost 自托管 0% 抽成；喜马拉雅 60-80% 抽成最重',
+    tipping: '微信公众号/知乎/Ko-fi 赞赏 0% 抽成；快手打赏 70% 到手最高',
+    ecommerce: '技术服务费普遍 1-5%，核心差异在商家设定的佣金比例',
+    ads: 'YouTube 长视频 55% 到手，Shorts 仅 45%；B站广告分成从 40% 降至 25%',
+    sponsorship: '小红书蒲公英博主端 0 抽佣，品牌方承担全部服务费',
+    course: '小鹅通额度内 0 抽成但需年费；Teachable 免费版 10% + 事务费',
+    newsletter: 'Substack 10% 抽成；小报童 15% 服务费 + ~6% 提现费',
+    affiliate: '小报童分销佣金 0 抽成，作者自设比例全额到账',
+    'digital-goods': '爱发电仅 6% 抽成；Gumroad 10% 抽成；得到电子书 ~70% 到手',
+    crowdfunding: '爱发电众筹 6% 平台费，创作者到手 94%',
+  },
+  cn: {
+    subscription: '微信公众号 0% 抽成最友好；喜马拉雅 60-80% 抽成最重',
+    tipping: '微信公众号/知乎赞赏 0% 抽成；快手打赏 70% 到手最高',
+    ecommerce: '技术服务费普遍 1-5%，核心差异在商家设定的佣金比例',
+    ads: 'B站广告分成 2025 年从 40% 降至 25%，创作激励上限 2000 元/月',
+    sponsorship: '小红书蒲公英博主端 0 抽佣，品牌方承担全部服务费',
+    course: '小鹅通额度内 0 抽成但需年费；得到邀约制 ~50% 分成',
+    newsletter: '小报童 15% 服务费 + ~6% 提现费，实际到手约 79%',
+    affiliate: '小报童分销佣金 0 抽成，作者自设比例全额到账',
+    'digital-goods': '爱发电仅 6% 抽成；得到电子书 ~70% 到手',
+    crowdfunding: '爱发电众筹 6% 平台费，创作者到手 94%',
+  },
+  global: {
+    subscription: 'Ghost 自托管 0% 抽成；Patreon 2025 年 8 月起新创作者统一 10%',
+    tipping: 'Ko-fi 打赏 0% 平台费（免费版）；Buy Me a Coffee 抽 5%',
+    ecommerce: '技术服务费普遍 1-5%，核心差异在商家设定的佣金比例',
+    ads: 'YouTube 长视频广告 55% 到手，Shorts 仅 45%；TikTok 需 10 万粉',
+    sponsorship: 'YouTube/TikTok 品牌合作由创作者自行定价',
+    course: 'Teachable 免费版 10% + $1 事务费；Kajabi 年费制 0% 抽成',
+    newsletter: 'Substack 10% 抽成；Beehiiv 免费版不抽成',
+    affiliate: 'Kit 推荐佣金 0 平台抽成，创作者全拿',
+    'digital-goods': 'Gumroad 10% 抽成；Lemon Squeezy 5% + 50¢',
+    crowdfunding: '爱发电众筹 6% 平台费，创作者到手 94%',
+  },
+};
+const insight = revenueInsights[region]?.[revenueType] || revenueInsights['all']?.[revenueType] || '';
+
+const tableId = `revenue-table-${region}-${tableIndex}`;
 ---
 
+{rows.length > 0 && (
 <div class="revenue-section" style="margin-bottom: 2rem;">
   <h3 style="color: var(--yellow); font-size: 1rem; margin-bottom: 0.25rem; font-family: monospace;">
     $ cat {revenueType}.csv <span style="color: var(--foreground2); font-size: 0.8rem; font-weight: normal; margin-left: 0.5rem;">// {label}</span>
@@ -100,6 +140,9 @@ const tableId = `revenue-table-${tableIndex}`;
           >
             <td>
               <a href={`${base}/platform/${p.id}`} style="color: var(--green); font-weight: 500; white-space: nowrap;">
+                {region === 'all' && (
+                  <span style="font-size: 0.75rem; margin-right: 0.2rem;">{regionFlag(p)}</span>
+                )}
                 {p.name}
               </a>
             </td>
@@ -121,3 +164,4 @@ const tableId = `revenue-table-${tableIndex}`;
     </table>
   </div>
 </div>
+)}

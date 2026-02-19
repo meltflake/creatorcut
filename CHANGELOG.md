@@ -1,5 +1,17 @@
 # Changelog
 
+## v0.2.0 (2026-02-19)
+
+- 新增 18 个海外产品（YouTube, TikTok, Twitch, Patreon, Substack, Ghost, Beehiiv, Kit, Gumroad, Lemon Squeezy, Teachable, Kajabi, Spotify, Apple Podcasts, X, Instagram, Buy Me a Coffee, Ko-fi）
+- 首页新增地区筛选（全部/中国/海外），三套表格 + Tab 切换，无需刷新
+- 对比页新增地区筛选，保留跨地区选择
+- 关键发现新增海外产品洞察（Ko-fi 0% 打赏、YouTube 55% 广告分成、Patreon 10% 统一费率、Apple Podcasts 30%→15%）
+- 收入计算器新增货币提示（人民币 vs 美元）
+- RevenueTable 组件支持 region 过滤，region=all 时显示 🇨🇳/🌍 标识
+- 每个变现类型的洞察文案按地区适配
+- 覆盖 33 个产品（15 个中国 + 18 个海外）
+- 版本号更新至 v0.2.0
+
 ## v0.1.5 (2026-02-19)
 
 - 新增产品对比页面：选择 2-3 个产品进行并排对比
