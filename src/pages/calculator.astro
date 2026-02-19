@@ -2,25 +2,733 @@
 import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import { platforms } from '../data/platforms/index';
+import { revenueTypeLabels } from '../data/types';
+import type { RevenueType, MonetizationMethod, Platform } from '../data/types';
+
+// Build a JSON-serializable dataset for client-side use
+interface CalcProduct {
+  platformId: string;
+  platformName: string;
+  methodName: string;
+  creatorCutMax: number;
+  entryCost: string;
+  revenueType: RevenueType;
+}
+
+const calcProducts: CalcProduct[] = [];
+platforms.forEach(p => {
+  p.monetization.forEach(m => {
+    if (m.creatorCutMax !== undefined) {
+      calcProducts.push({
+        platformId: p.id,
+        platformName: p.name,
+        methodName: m.name,
+        creatorCutMax: m.creatorCutMax,
+        entryCost: m.entryCost || '免费',
+        revenueType: m.type,
+      });
+    }
+  });
+});
+
+// Collect active revenue types
+const activeRevenueTypes: { value: RevenueType; label: string }[] = [];
+const seen = new Set<RevenueType>();
+platforms.forEach(p => {
+  p.monetization.forEach(m => {
+    if (!seen.has(m.type)) {
+      seen.add(m.type);
+      activeRevenueTypes.push({ value: m.type, label: revenueTypeLabels[m.type] });
+    }
+  });
+});
+
+const base = import.meta.env.BASE_URL;
 ---
 
 <Layout title="收入计算器 — CreatorCut">
   <Header />
 
-  <main class="py-4 text-center">
-    <h1 style="color: var(--green); font-size: 1.5rem; margin-bottom: 1rem;">
-      $ python3 calculator.py --revenue 10000
-    </h1>
-    <div is-="box" style="padding: 2rem;">
-      <p style="color: var(--yellow); font-size: 1.2rem; margin-bottom: 0.5rem;">🚧 建设中</p>
-      <p style="color: var(--foreground1); font-size: 0.9rem;">
-        收入计算器即将上线。输入月收入金额，查看在不同产品的实际到手金额。
+  <main>
+    <!-- Page Title -->
+    <section class="py-2 text-center">
+      <h1 style="color: var(--green); font-size: 1.5rem; margin-bottom: 0.5rem;">
+        $ python3 calculator.py
+      </h1>
+      <p style="color: var(--foreground2); font-size: 0.85rem;">
+        输入收入金额，计算在不同产品的实际到手金额
       </p>
-      <p style="color: var(--foreground2); font-size: 0.85rem; margin-top: 1rem;">
-        Coming in v0.3
-      </p>
+    </section>
+
+    <!-- Tab Switcher -->
+    <div class="flex mb-3" style="border-bottom: 1px solid var(--surface1);">
+      <button
+        id="tab-revenue"
+        class="calc-tab active"
+        style="padding: 0.5rem 1rem; background: none; border: none; border-bottom: 2px solid var(--green); color: var(--green); font-family: inherit; font-size: 0.9rem; cursor: pointer;"
+      >
+        收入计算器
+      </button>
+      <button
+        id="tab-saas"
+        class="calc-tab"
+        style="padding: 0.5rem 1rem; background: none; border: none; border-bottom: 2px solid transparent; color: var(--foreground2); font-family: inherit; font-size: 0.9rem; cursor: pointer;"
+      >
+        SaaS 对比
+      </button>
+    </div>
+
+    <!-- ==================== Mode 1: Revenue Calculator ==================== -->
+    <div id="panel-revenue">
+      <div is-="box" style="padding: 1rem; margin-bottom: 1.5rem;">
+        <h2 style="color: var(--yellow); font-size: 0.95rem; margin-top: 0; margin-bottom: 0.75rem; font-family: monospace;">
+          $ calculator --mode=revenue
+        </h2>
+
+        <div class="flex flex-wrap gap-2" style="align-items: flex-end;">
+          <!-- Revenue input -->
+          <div style="flex: 1; min-width: 12rem;">
+            <label for="revenue-input" style="color: var(--foreground2); font-size: 0.8rem; display: block; margin-bottom: 0.25rem;">
+              月收入金额 (¥)
+            </label>
+            <div class="flex items-center" style="background: var(--surface0); border: 1px solid var(--surface1); padding: 0.4rem 0.6rem;">
+              <span style="color: var(--green); margin-right: 0.4rem; font-size: 0.9rem;">&gt;</span>
+              <input
+                type="number"
+                id="revenue-input"
+                placeholder="10000"
+                min="0"
+                style="background: transparent; border: none; color: var(--sky); font-family: var(--font-mono); font-size: 0.9rem; outline: none; width: 100%;"
+              />
+            </div>
+          </div>
+
+          <!-- Revenue type selector -->
+          <div style="flex: 1; min-width: 12rem;">
+            <label for="revenue-type-select" style="color: var(--foreground2); font-size: 0.8rem; display: block; margin-bottom: 0.25rem;">
+              变现类型
+            </label>
+            <div style="background: var(--surface0); border: 1px solid var(--surface1); padding: 0.4rem 0.6rem;">
+              <select
+                id="revenue-type-select"
+                style="background: transparent; border: none; color: var(--sky); font-family: var(--font-mono); font-size: 0.9rem; outline: none; width: 100%; cursor: pointer;"
+              >
+                <option value="all" style="background: var(--surface0); color: var(--foreground1);">全部类型</option>
+                {activeRevenueTypes.map(rt => (
+                  <option value={rt.value} style="background: var(--surface0); color: var(--foreground1);">
+                    {rt.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          <!-- Calculate button -->
+          <button
+            id="btn-calc-revenue"
+            style="background: var(--green); color: var(--base); border: none; padding: 0.5rem 1.2rem; font-family: inherit; font-size: 0.9rem; cursor: pointer; font-weight: 600;"
+          >
+            计算
+          </button>
+        </div>
+      </div>
+
+      <!-- Disclaimer -->
+      <div id="revenue-disclaimer" style="display: none; margin-bottom: 1rem; padding: 0.5rem 0.75rem; border-left: 3px solid var(--yellow); background: var(--surface0);">
+        <span style="color: var(--yellow); font-weight: 600;">⚠ 不含税。</span>
+        <span style="color: var(--foreground2); font-size: 0.85rem;">实际到手还需扣除个人所得税。数据基于各产品公开政策，仅供参考。</span>
+      </div>
+
+      <!-- Results table -->
+      <div id="revenue-results" style="display: none;">
+        <h3 style="color: var(--yellow); font-size: 0.9rem; margin-bottom: 0.5rem; font-family: monospace;">
+          <span id="revenue-result-header"></span>
+        </h3>
+        <div class="table-wrap">
+          <table class="revenue-table" style="width: 100%; font-size: 0.85rem;">
+            <thead>
+              <tr>
+                <th style="text-align: left; padding: 0.4rem 0.5rem; border-bottom: 1px solid var(--surface1); white-space: nowrap;">产品</th>
+                <th style="text-align: right; padding: 0.4rem 0.5rem; border-bottom: 1px solid var(--surface1); white-space: nowrap;">到手金额</th>
+                <th style="text-align: right; padding: 0.4rem 0.5rem; border-bottom: 1px solid var(--surface1); white-space: nowrap;">抽成金额</th>
+                <th style="text-align: right; padding: 0.4rem 0.5rem; border-bottom: 1px solid var(--surface1); white-space: nowrap;">抽成比例</th>
+                <th style="text-align: left; padding: 0.4rem 0.5rem; border-bottom: 1px solid var(--surface1); white-space: nowrap;">入门成本</th>
+              </tr>
+            </thead>
+            <tbody id="revenue-table-body">
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Empty state -->
+      <div id="revenue-empty" style="display: none; text-align: center; padding: 2rem; color: var(--foreground2);">
+        <p>没有找到匹配的产品。请尝试其他变现类型。</p>
+      </div>
+    </div>
+
+    <!-- ==================== Mode 2: SaaS Comparison Calculator ==================== -->
+    <div id="panel-saas" style="display: none;">
+      <div is-="box" style="padding: 1rem; margin-bottom: 1.5rem;">
+        <h2 style="color: var(--yellow); font-size: 0.95rem; margin-top: 0; margin-bottom: 0.75rem; font-family: monospace;">
+          $ calculator --mode=saas-vs-commission
+        </h2>
+        <p style="color: var(--foreground2); font-size: 0.82rem; margin-bottom: 1rem;">
+          年费 SaaS（小鹅通）vs 分成模式（知识星球、小报童、爱发电），哪种更划算？
+        </p>
+
+        <!-- Input mode toggle -->
+        <div class="flex gap-2 mb-2" style="align-items: center;">
+          <label style="color: var(--foreground2); font-size: 0.8rem;">输入方式：</label>
+          <label style="cursor: pointer; font-size: 0.85rem;">
+            <input type="radio" name="saas-input-mode" value="annual" checked style="accent-color: var(--green);" />
+            <span style="color: var(--foreground1);">直接输入年营收</span>
+          </label>
+          <label style="cursor: pointer; font-size: 0.85rem;">
+            <input type="radio" name="saas-input-mode" value="users" style="accent-color: var(--green);" />
+            <span style="color: var(--foreground1);">用户数 × 客单价</span>
+          </label>
+        </div>
+
+        <!-- Annual revenue input -->
+        <div id="saas-input-annual" class="flex flex-wrap gap-2" style="align-items: flex-end;">
+          <div style="flex: 1; min-width: 14rem;">
+            <label for="saas-annual-revenue" style="color: var(--foreground2); font-size: 0.8rem; display: block; margin-bottom: 0.25rem;">
+              年营收 (¥)
+            </label>
+            <div class="flex items-center" style="background: var(--surface0); border: 1px solid var(--surface1); padding: 0.4rem 0.6rem;">
+              <span style="color: var(--green); margin-right: 0.4rem; font-size: 0.9rem;">&gt;</span>
+              <input
+                type="number"
+                id="saas-annual-revenue"
+                placeholder="120000"
+                min="0"
+                style="background: transparent; border: none; color: var(--sky); font-family: var(--font-mono); font-size: 0.9rem; outline: none; width: 100%;"
+              />
+            </div>
+          </div>
+          <button
+            id="btn-calc-saas"
+            style="background: var(--green); color: var(--base); border: none; padding: 0.5rem 1.2rem; font-family: inherit; font-size: 0.9rem; cursor: pointer; font-weight: 600;"
+          >
+            计算
+          </button>
+        </div>
+
+        <!-- Users × price input -->
+        <div id="saas-input-users" style="display: none;" class="flex flex-wrap gap-2" style="align-items: flex-end;">
+          <div style="flex: 1; min-width: 10rem;">
+            <label for="saas-users" style="color: var(--foreground2); font-size: 0.8rem; display: block; margin-bottom: 0.25rem;">
+              付费用户数
+            </label>
+            <div class="flex items-center" style="background: var(--surface0); border: 1px solid var(--surface1); padding: 0.4rem 0.6rem;">
+              <span style="color: var(--green); margin-right: 0.4rem; font-size: 0.9rem;">&gt;</span>
+              <input
+                type="number"
+                id="saas-users"
+                placeholder="500"
+                min="0"
+                style="background: transparent; border: none; color: var(--sky); font-family: var(--font-mono); font-size: 0.9rem; outline: none; width: 100%;"
+              />
+            </div>
+          </div>
+          <div style="flex: 1; min-width: 10rem;">
+            <label for="saas-price" style="color: var(--foreground2); font-size: 0.8rem; display: block; margin-bottom: 0.25rem;">
+              客单价 (¥/年)
+            </label>
+            <div class="flex items-center" style="background: var(--surface0); border: 1px solid var(--surface1); padding: 0.4rem 0.6rem;">
+              <span style="color: var(--green); margin-right: 0.4rem; font-size: 0.9rem;">&gt;</span>
+              <input
+                type="number"
+                id="saas-price"
+                placeholder="299"
+                min="0"
+                style="background: transparent; border: none; color: var(--sky); font-family: var(--font-mono); font-size: 0.9rem; outline: none; width: 100%;"
+              />
+            </div>
+          </div>
+          <button
+            id="btn-calc-saas-users"
+            style="background: var(--green); color: var(--base); border: none; padding: 0.5rem 1.2rem; font-family: inherit; font-size: 0.9rem; cursor: pointer; font-weight: 600;"
+          >
+            计算
+          </button>
+        </div>
+      </div>
+
+      <!-- Disclaimer -->
+      <div id="saas-disclaimer" style="display: none; margin-bottom: 1rem; padding: 0.5rem 0.75rem; border-left: 3px solid var(--yellow); background: var(--surface0);">
+        <span style="color: var(--yellow); font-weight: 600;">⚠ 不含税。</span>
+        <span style="color: var(--foreground2); font-size: 0.85rem;">实际到手还需扣除个人所得税。计算基于各产品公开政策，仅供参考。</span>
+      </div>
+
+      <!-- SaaS Results -->
+      <div id="saas-results" style="display: none;">
+        <h3 style="color: var(--yellow); font-size: 0.9rem; margin-bottom: 0.75rem; font-family: monospace;">
+          <span id="saas-result-header"></span>
+        </h3>
+
+        <!-- SaaS Mode Section -->
+        <div style="margin-bottom: 1.5rem;">
+          <h4 style="color: var(--sky); font-size: 0.9rem; margin-bottom: 0.5rem; font-family: monospace;">
+            ┌─ SaaS 模式（小鹅通）
+          </h4>
+          <div class="table-wrap">
+            <table class="revenue-table" style="width: 100%; font-size: 0.85rem;">
+              <thead>
+                <tr>
+                  <th style="text-align: left; padding: 0.4rem 0.5rem; border-bottom: 1px solid var(--surface1); white-space: nowrap;">版本</th>
+                  <th style="text-align: right; padding: 0.4rem 0.5rem; border-bottom: 1px solid var(--surface1); white-space: nowrap;">年费</th>
+                  <th style="text-align: right; padding: 0.4rem 0.5rem; border-bottom: 1px solid var(--surface1); white-space: nowrap;">超额抽佣</th>
+                  <th style="text-align: right; padding: 0.4rem 0.5rem; border-bottom: 1px solid var(--surface1); white-space: nowrap;">总成本</th>
+                  <th style="text-align: right; padding: 0.4rem 0.5rem; border-bottom: 1px solid var(--surface1); white-space: nowrap;">到手金额</th>
+                  <th style="text-align: right; padding: 0.4rem 0.5rem; border-bottom: 1px solid var(--surface1); white-space: nowrap;">实际抽成率</th>
+                </tr>
+              </thead>
+              <tbody id="saas-table-body">
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Commission Mode Section -->
+        <div style="margin-bottom: 1.5rem;">
+          <h4 style="color: var(--sky); font-size: 0.9rem; margin-bottom: 0.5rem; font-family: monospace;">
+            ├─ 分成模式
+          </h4>
+          <div class="table-wrap">
+            <table class="revenue-table" style="width: 100%; font-size: 0.85rem;">
+              <thead>
+                <tr>
+                  <th style="text-align: left; padding: 0.4rem 0.5rem; border-bottom: 1px solid var(--surface1); white-space: nowrap;">产品</th>
+                  <th style="text-align: right; padding: 0.4rem 0.5rem; border-bottom: 1px solid var(--surface1); white-space: nowrap;">抽成规则</th>
+                  <th style="text-align: right; padding: 0.4rem 0.5rem; border-bottom: 1px solid var(--surface1); white-space: nowrap;">总成本</th>
+                  <th style="text-align: right; padding: 0.4rem 0.5rem; border-bottom: 1px solid var(--surface1); white-space: nowrap;">到手金额</th>
+                  <th style="text-align: right; padding: 0.4rem 0.5rem; border-bottom: 1px solid var(--surface1); white-space: nowrap;">实际抽成率</th>
+                </tr>
+              </thead>
+              <tbody id="commission-table-body">
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Breakeven Box -->
+        <div id="breakeven-box" style="border: 1px solid var(--yellow); padding: 0.75rem 1rem; margin-bottom: 1rem; background: var(--surface0);">
+          <h4 style="color: var(--yellow); font-size: 0.9rem; margin: 0 0 0.5rem 0; font-family: monospace;">
+            └─ 盈亏平衡点
+          </h4>
+          <p id="breakeven-text" style="color: var(--foreground1); font-size: 0.85rem; margin: 0;"></p>
+        </div>
+
+        <!-- Recommendation -->
+        <div id="recommendation-box" style="border: 1px solid var(--green); padding: 0.75rem 1rem; background: var(--surface0); display: none;">
+          <p id="recommendation-text" style="color: var(--green); font-size: 0.9rem; margin: 0; font-weight: 500;"></p>
+        </div>
+      </div>
     </div>
   </main>
 
   <Footer />
 </Layout>
+
+<script define:vars={{ calcProducts, activeRevenueTypes, base }}>
+  // ==================== Revenue Calculator Logic ====================
+  
+  function formatMoney(val) {
+    return '¥' + val.toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+  
+  function formatPercent(val) {
+    return val.toFixed(1) + '%';
+  }
+
+  function cutColor(percent) {
+    if (percent >= 80) return 'var(--green)';
+    if (percent >= 50) return 'var(--peach)';
+    return 'var(--red)';
+  }
+  
+  function costColor(percent) {
+    // For cost: lower is better (green), higher is worse (red)
+    if (percent <= 10) return 'var(--green)';
+    if (percent <= 30) return 'var(--peach)';
+    return 'var(--red)';
+  }
+
+  function entryCostColor(cost) {
+    if (!cost || cost === '免费') return 'var(--green)';
+    return 'var(--peach)';
+  }
+
+  function calculateRevenue() {
+    const input = document.getElementById('revenue-input');
+    const select = document.getElementById('revenue-type-select');
+    const revenue = parseFloat(input.value);
+    
+    if (!revenue || revenue <= 0) return;
+
+    const revenueType = select.value;
+    
+    // Filter products
+    let filtered = calcProducts;
+    if (revenueType !== 'all') {
+      filtered = calcProducts.filter(p => p.revenueType === revenueType);
+    }
+
+    // Calculate take-home and sort
+    const results = filtered.map(p => {
+      const cutPercent = 100 - p.creatorCutMax;
+      const cutAmount = revenue * (cutPercent / 100);
+      const takeHome = revenue - cutAmount;
+      return {
+        ...p,
+        cutPercent,
+        cutAmount,
+        takeHome,
+      };
+    });
+
+    results.sort((a, b) => b.takeHome - a.takeHome);
+
+    // Render
+    const tbody = document.getElementById('revenue-table-body');
+    const resultsDiv = document.getElementById('revenue-results');
+    const emptyDiv = document.getElementById('revenue-empty');
+    const disclaimer = document.getElementById('revenue-disclaimer');
+    const header = document.getElementById('revenue-result-header');
+
+    if (results.length === 0) {
+      resultsDiv.style.display = 'none';
+      emptyDiv.style.display = 'block';
+      disclaimer.style.display = 'none';
+      return;
+    }
+
+    const typeName = revenueType === 'all' ? '全部类型' : activeRevenueTypes.find(r => r.value === revenueType)?.label || revenueType;
+    header.textContent = `$ calc --revenue=${formatMoney(revenue)} --type=${typeName}   # 共 ${results.length} 个结果`;
+
+    const bestTakeHome = results[0]?.takeHome || 0;
+    const worstTakeHome = results[results.length - 1]?.takeHome || 0;
+
+    tbody.innerHTML = results.map((r, i) => {
+      const isBest = r.takeHome === bestTakeHome && results.length > 1;
+      const isWorst = r.takeHome === worstTakeHome && results.length > 1 && bestTakeHome !== worstTakeHome;
+      
+      const takeHomeColor = isBest ? 'var(--green)' : (isWorst ? 'var(--red)' : cutColor(r.creatorCutMax));
+      const cutAmountColor = isBest ? 'var(--green)' : (isWorst ? 'var(--red)' : costColor(r.cutPercent));
+      const rowBg = isBest ? 'background: rgba(166, 227, 161, 0.06);' : (isWorst ? 'background: rgba(243, 139, 168, 0.06);' : '');
+
+      return `<tr style="${rowBg}">
+        <td style="padding: 0.4rem 0.5rem; border-bottom: 1px solid var(--surface0);">
+          <a href="${base}/platform/${r.platformId}" style="color: var(--green); font-weight: 500; white-space: nowrap; text-decoration: none;">${r.platformName}</a>
+          <span style="color: var(--foreground2); font-size: 0.75rem; margin-left: 0.3rem;">${r.methodName}</span>
+        </td>
+        <td style="text-align: right; padding: 0.4rem 0.5rem; border-bottom: 1px solid var(--surface0); color: ${takeHomeColor}; font-weight: 600; white-space: nowrap;">
+          ${formatMoney(r.takeHome)}
+        </td>
+        <td style="text-align: right; padding: 0.4rem 0.5rem; border-bottom: 1px solid var(--surface0); color: ${cutAmountColor}; white-space: nowrap;">
+          ${formatMoney(r.cutAmount)}
+        </td>
+        <td style="text-align: right; padding: 0.4rem 0.5rem; border-bottom: 1px solid var(--surface0); color: var(--foreground2); white-space: nowrap;">
+          ${formatPercent(r.cutPercent)}
+        </td>
+        <td style="padding: 0.4rem 0.5rem; border-bottom: 1px solid var(--surface0); color: ${entryCostColor(r.entryCost)}; font-size: 0.8rem; white-space: nowrap;">
+          ${r.entryCost}
+        </td>
+      </tr>`;
+    }).join('');
+
+    resultsDiv.style.display = 'block';
+    emptyDiv.style.display = 'none';
+    disclaimer.style.display = 'block';
+  }
+
+  // ==================== SaaS Comparison Logic ====================
+
+  // SaaS tiers (小鹅通)
+  const saasTiers = [
+    { name: '小鹅通 基础版', annualFee: 6800, freeQuota: 250000, overageRate: 0.02 },
+    { name: '小鹅通 专业版', annualFee: 12800, freeQuota: 500000, overageRate: 0.02 },
+    { name: '小鹅通 旗舰版', annualFee: 25800, freeQuota: 1250000, overageRate: 0.02 },
+  ];
+
+  // Commission-based products
+  function calcCommission(revenue) {
+    const products = [
+      {
+        name: '知识星球 个人',
+        rule: '20%',
+        cost: revenue * 0.20,
+        takeHome: revenue * 0.80,
+      },
+      {
+        name: '知识星球 企业',
+        rule: '10万内10%，超出5%',
+        cost: (() => {
+          if (revenue <= 100000) return revenue * 0.10;
+          return 100000 * 0.10 + (revenue - 100000) * 0.05;
+        })(),
+        takeHome: 0, // will be set below
+      },
+      {
+        name: '小报童',
+        rule: '15% + ~6%提现费',
+        cost: revenue - revenue * 0.85 * 0.94,
+        takeHome: revenue * 0.85 * 0.94,
+      },
+      {
+        name: '爱发电',
+        rule: '6%',
+        cost: revenue * 0.06,
+        takeHome: revenue * 0.94,
+      },
+    ];
+    // Fix take-home for zsxq enterprise
+    products[1].takeHome = revenue - products[1].cost;
+    return products;
+  }
+
+  function calcSaasTier(tier, revenue) {
+    const overage = Math.max(0, revenue - tier.freeQuota) * tier.overageRate;
+    const totalCost = tier.annualFee + overage;
+    const takeHome = revenue - totalCost;
+    return {
+      name: tier.name,
+      annualFee: tier.annualFee,
+      overage,
+      totalCost,
+      takeHome,
+      effectiveRate: revenue > 0 ? (totalCost / revenue * 100) : 0,
+    };
+  }
+
+  // Find breakeven: where best SaaS becomes cheaper than best commission
+  // For each SaaS tier, find the revenue where SaaS cost = best commission cost
+  function findBreakevens() {
+    // We compare the best SaaS tier at each revenue level with the best commission option
+    // The most commonly compared is 小鹅通 基础版 vs 知识星球 个人 (20%)
+    // Breakeven: 6800 + max(0, R - 250000)*0.02 = R * 0.20
+    // For R <= 250000: 6800 = 0.20R → R = 34000
+    // For R > 250000: 6800 + (R-250000)*0.02 = 0.20R → 6800 + 0.02R - 5000 = 0.20R → 1800 = 0.18R → R = 10000
+    // But R > 250000 doesn't hold at R=10000, so only the first applies: R=34000
+    
+    // Actually let's compute numerically for each tier vs best commission
+    const breakevens = [];
+    
+    saasTiers.forEach(tier => {
+      // Compare vs 知识星球个人 (worst commission = 20%)
+      // tier cost = annualFee + max(0, R - freeQuota) * overageRate
+      // commission cost = R * 0.20
+      // breakeven: tier cost = commission cost
+      
+      // Case 1: R <= freeQuota
+      // annualFee = 0.20 * R → R = annualFee / 0.20
+      let r1 = tier.annualFee / 0.20;
+      if (r1 <= tier.freeQuota) {
+        breakevens.push({
+          tierName: tier.name,
+          vsProduct: '知识星球个人 (20%)',
+          breakeven: Math.round(r1),
+        });
+      } else {
+        // Case 2: R > freeQuota
+        // annualFee + (R - freeQuota) * overageRate = 0.20 * R
+        // annualFee - freeQuota * overageRate = R * (0.20 - overageRate)
+        let r2 = (tier.annualFee - tier.freeQuota * tier.overageRate) / (0.20 - tier.overageRate);
+        if (r2 > tier.freeQuota) {
+          breakevens.push({
+            tierName: tier.name,
+            vsProduct: '知识星球个人 (20%)',
+            breakeven: Math.round(r2),
+          });
+        }
+      }
+    });
+
+    return breakevens;
+  }
+
+  function calculateSaas(revenue) {
+    if (!revenue || revenue <= 0) return;
+
+    const saasResults = saasTiers.map(tier => calcSaasTier(tier, revenue));
+    const commissionResults = calcCommission(revenue);
+
+    // Find overall cheapest
+    const allCosts = [
+      ...saasResults.map(s => ({ name: s.name, cost: s.totalCost, takeHome: s.takeHome })),
+      ...commissionResults.map(c => ({ name: c.name, cost: c.cost, takeHome: c.takeHome })),
+    ];
+    
+    // Filter out negative take-home (SaaS fee exceeds revenue)
+    const validOptions = allCosts.filter(o => o.takeHome >= 0);
+    const cheapest = validOptions.length > 0 
+      ? validOptions.reduce((a, b) => a.cost < b.cost ? a : b)
+      : null;
+
+    // Render header
+    document.getElementById('saas-result-header').textContent = 
+      `$ calc --mode=saas-vs-commission --annual-revenue=${formatMoney(revenue)}`;
+
+    // Render SaaS table
+    const saasTbody = document.getElementById('saas-table-body');
+    saasTbody.innerHTML = saasResults.map(s => {
+      const isCheapest = cheapest && s.name === cheapest.name;
+      const rowBg = isCheapest ? 'background: rgba(166, 227, 161, 0.08);' : '';
+      const takeHomeColor = s.takeHome < 0 ? 'var(--red)' : (isCheapest ? 'var(--green)' : 'var(--foreground1)');
+      const badge = isCheapest ? ' <span style="color: var(--green); font-size: 0.75rem;">★ 最优</span>' : '';
+      
+      return `<tr style="${rowBg}">
+        <td style="padding: 0.4rem 0.5rem; border-bottom: 1px solid var(--surface0); color: var(--foreground1); white-space: nowrap;">${s.name}${badge}</td>
+        <td style="text-align: right; padding: 0.4rem 0.5rem; border-bottom: 1px solid var(--surface0); color: var(--peach); white-space: nowrap;">${formatMoney(s.annualFee)}</td>
+        <td style="text-align: right; padding: 0.4rem 0.5rem; border-bottom: 1px solid var(--surface0); color: ${s.overage > 0 ? 'var(--peach)' : 'var(--foreground2)'}; white-space: nowrap;">${s.overage > 0 ? formatMoney(s.overage) : '—'}</td>
+        <td style="text-align: right; padding: 0.4rem 0.5rem; border-bottom: 1px solid var(--surface0); color: var(--red); font-weight: 500; white-space: nowrap;">${formatMoney(s.totalCost)}</td>
+        <td style="text-align: right; padding: 0.4rem 0.5rem; border-bottom: 1px solid var(--surface0); color: ${takeHomeColor}; font-weight: 600; white-space: nowrap;">${s.takeHome >= 0 ? formatMoney(s.takeHome) : formatMoney(s.takeHome)}</td>
+        <td style="text-align: right; padding: 0.4rem 0.5rem; border-bottom: 1px solid var(--surface0); color: var(--foreground2); white-space: nowrap;">${formatPercent(s.effectiveRate)}</td>
+      </tr>`;
+    }).join('');
+
+    // Render commission table
+    const commTbody = document.getElementById('commission-table-body');
+    commTbody.innerHTML = commissionResults.map(c => {
+      const isCheapest = cheapest && c.name === cheapest.name;
+      const rowBg = isCheapest ? 'background: rgba(166, 227, 161, 0.08);' : '';
+      const takeHomeColor = isCheapest ? 'var(--green)' : 'var(--foreground1)';
+      const effectiveRate = revenue > 0 ? (c.cost / revenue * 100) : 0;
+      const badge = isCheapest ? ' <span style="color: var(--green); font-size: 0.75rem;">★ 最优</span>' : '';
+      
+      return `<tr style="${rowBg}">
+        <td style="padding: 0.4rem 0.5rem; border-bottom: 1px solid var(--surface0); color: var(--foreground1); white-space: nowrap;">${c.name}${badge}</td>
+        <td style="text-align: right; padding: 0.4rem 0.5rem; border-bottom: 1px solid var(--surface0); color: var(--foreground2); font-size: 0.8rem; white-space: nowrap;">${c.rule}</td>
+        <td style="text-align: right; padding: 0.4rem 0.5rem; border-bottom: 1px solid var(--surface0); color: var(--red); font-weight: 500; white-space: nowrap;">${formatMoney(c.cost)}</td>
+        <td style="text-align: right; padding: 0.4rem 0.5rem; border-bottom: 1px solid var(--surface0); color: ${takeHomeColor}; font-weight: 600; white-space: nowrap;">${formatMoney(c.takeHome)}</td>
+        <td style="text-align: right; padding: 0.4rem 0.5rem; border-bottom: 1px solid var(--surface0); color: var(--foreground2); white-space: nowrap;">${formatPercent(effectiveRate)}</td>
+      </tr>`;
+    }).join('');
+
+    // Breakeven analysis
+    const breakevens = findBreakevens();
+    const breakevenText = document.getElementById('breakeven-text');
+    
+    if (breakevens.length > 0) {
+      const lines = breakevens.map(b => 
+        `当年营收超过 <span style="color: var(--yellow); font-weight: 600;">¥${b.breakeven.toLocaleString('zh-CN')}</span> 时，${b.tierName} 比 ${b.vsProduct} 更划算`
+      );
+      breakevenText.innerHTML = lines.join('<br/>');
+    }
+
+    // Recommendation
+    const recBox = document.getElementById('recommendation-box');
+    const recText = document.getElementById('recommendation-text');
+    if (cheapest) {
+      recText.textContent = `以年营收 ${formatMoney(revenue)} 计算，${cheapest.name} 是当前最优选择（成本 ${formatMoney(cheapest.cost)}，到手 ${formatMoney(cheapest.takeHome)}）`;
+      recBox.style.display = 'block';
+    } else {
+      recBox.style.display = 'none';
+    }
+
+    // Show results
+    document.getElementById('saas-results').style.display = 'block';
+    document.getElementById('saas-disclaimer').style.display = 'block';
+  }
+
+  // ==================== Event Binding ====================
+
+  // Revenue calculator
+  document.getElementById('btn-calc-revenue').addEventListener('click', calculateRevenue);
+  document.getElementById('revenue-input').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') calculateRevenue();
+  });
+
+  // SaaS calculator - annual input
+  document.getElementById('btn-calc-saas').addEventListener('click', () => {
+    const revenue = parseFloat(document.getElementById('saas-annual-revenue').value);
+    calculateSaas(revenue);
+  });
+  document.getElementById('saas-annual-revenue').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      const revenue = parseFloat(document.getElementById('saas-annual-revenue').value);
+      calculateSaas(revenue);
+    }
+  });
+
+  // SaaS calculator - users × price input
+  document.getElementById('btn-calc-saas-users').addEventListener('click', () => {
+    const users = parseFloat(document.getElementById('saas-users').value);
+    const price = parseFloat(document.getElementById('saas-price').value);
+    if (users > 0 && price > 0) calculateSaas(users * price);
+  });
+
+  // Handle Enter key on users/price inputs
+  ['saas-users', 'saas-price'].forEach(id => {
+    document.getElementById(id).addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        const users = parseFloat(document.getElementById('saas-users').value);
+        const price = parseFloat(document.getElementById('saas-price').value);
+        if (users > 0 && price > 0) calculateSaas(users * price);
+      }
+    });
+  });
+
+  // Input mode toggle
+  document.querySelectorAll('input[name="saas-input-mode"]').forEach(radio => {
+    radio.addEventListener('change', () => {
+      const isAnnual = radio.value === 'annual';
+      document.getElementById('saas-input-annual').style.display = isAnnual ? 'flex' : 'none';
+      document.getElementById('saas-input-users').style.display = isAnnual ? 'none' : 'flex';
+    });
+  });
+
+  // Tab switching
+  document.getElementById('tab-revenue').addEventListener('click', () => {
+    document.getElementById('tab-revenue').style.borderBottomColor = 'var(--green)';
+    document.getElementById('tab-revenue').style.color = 'var(--green)';
+    document.getElementById('tab-saas').style.borderBottomColor = 'transparent';
+    document.getElementById('tab-saas').style.color = 'var(--foreground2)';
+    document.getElementById('panel-revenue').style.display = 'block';
+    document.getElementById('panel-saas').style.display = 'none';
+  });
+
+  document.getElementById('tab-saas').addEventListener('click', () => {
+    document.getElementById('tab-saas').style.borderBottomColor = 'var(--green)';
+    document.getElementById('tab-saas').style.color = 'var(--green)';
+    document.getElementById('tab-revenue').style.borderBottomColor = 'transparent';
+    document.getElementById('tab-revenue').style.color = 'var(--foreground2)';
+    document.getElementById('panel-saas').style.display = 'block';
+    document.getElementById('panel-revenue').style.display = 'none';
+  });
+</script>
+
+<style is:global>
+  .calc-tab:hover {
+    color: var(--green) !important;
+  }
+  
+  #panel-revenue input[type="number"]::-webkit-outer-spin-button,
+  #panel-revenue input[type="number"]::-webkit-inner-spin-button,
+  #panel-saas input[type="number"]::-webkit-outer-spin-button,
+  #panel-saas input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  
+  #panel-revenue input[type="number"],
+  #panel-saas input[type="number"] {
+    -moz-appearance: textfield;
+  }
+
+  .revenue-table th {
+    text-align: left;
+    padding: 0.4rem 0.5rem;
+    border-bottom: 1px solid var(--surface1);
+  }
+  .revenue-table td {
+    padding: 0.4rem 0.5rem;
+    border-bottom: 1px solid var(--surface0);
+  }
+  .revenue-table tr:hover td {
+    background: var(--surface0);
+  }
+</style>
