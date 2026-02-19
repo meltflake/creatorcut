@@ -1,0 +1,19 @@
+---
+interface Props {
+  type: 'official' | 'media' | 'estimate';
+}
+
+const { type } = Astro.props;
+
+const config = {
+  official: { emoji: '🟢', label: '官方数据' },
+  media: { emoji: '🟡', label: '媒体报道' },
+  estimate: { emoji: '⚪', label: '行业估算' },
+};
+
+const { emoji, label } = config[type];
+---
+
+<span title={label} style="font-size: 0.85rem;">
+  {emoji} <span style="color: var(--foreground2);">{label}</span>
+</span>

@@ -1,0 +1,163 @@
+---
+import { platforms } from '../data/platforms/index';
+import { revenueTypeLabels, contentFormLabels } from '../data/types';
+import type { RevenueType } from '../data/types';
+
+const base = import.meta.env.BASE_URL;
+
+// Collect all unique revenue types across platforms
+const allRevenueTypes = new Set<RevenueType>();
+platforms.forEach(p => p.monetization.forEach(m => allRevenueTypes.add(m.type)));
+---
+
+<div>
+  <!-- Filter controls -->
+  <div class="flex flex-wrap gap-1 mb-2" style="align-items: center;">
+    <span style="color: var(--foreground2); font-size: 0.85rem;">筛选：</span>
+    <button 
+      class="filter-btn active" 
+      data-filter="all"
+      is-="button"
+      variant-="foreground0"
+      style="font-size: 0.75rem; padding: 0.2rem 0.5rem;"
+    >
+      全部
+    </button>
+    {Array.from(allRevenueTypes).map(rt => (
+      <button 
+        class="filter-btn" 
+        data-filter={rt}
+        style="font-size: 0.75rem; padding: 0.2rem 0.5rem;"
+      >
+        {revenueTypeLabels[rt]}
+      </button>
+    ))}
+  </div>
+
+  <!-- Table -->
+  <div class="table-wrap">
+    <table id="platform-table" style="width: 100%; font-size: 0.85rem;">
+      <thead>
+        <tr>
+          <th class="sortable" data-sort="name" style="cursor: pointer; white-space: nowrap;">
+            平台 ↕
+          </th>
+          <th style="white-space: nowrap;">类型</th>
+          <th style="white-space: nowrap;">核心变现</th>
+          <th class="sortable" data-sort="cut-min" style="cursor: pointer; white-space: nowrap;">
+            创作者到手(低) ↕
+          </th>
+          <th class="sortable" data-sort="cut-max" style="cursor: pointer; white-space: nowrap;">
+            创作者到手(高) ↕
+          </th>
+          <th style="white-space: nowrap;">成立</th>
+        </tr>
+      </thead>
+      <tbody>
+        {platforms.map(p => {
+          const revenueTypes = p.monetization.map(m => m.type);
+          const mainMethods = p.monetization.slice(0, 2).map(m => m.name).join('、');
+          return (
+            <tr 
+              class="platform-row" 
+              data-revenue-types={JSON.stringify(revenueTypes)}
+              data-cut-min={p.creatorCutMin}
+              data-cut-max={p.creatorCutMax}
+              data-name={p.name}
+            >
+              <td>
+                <a href={`${base}platform/${p.id}`} style="color: var(--green); font-weight: 500;">
+                  {p.name}
+                </a>
+              </td>
+              <td style="color: var(--foreground1);">{p.type}</td>
+              <td style="color: var(--foreground1); font-size: 0.8rem;">{mainMethods}</td>
+              <td style="color: var(--peach);">{p.creatorCutMin}%</td>
+              <td style="color: var(--green);">{p.creatorCutMax}%</td>
+              <td style="color: var(--foreground2);">{p.foundedYear || '—'}</td>
+            </tr>
+          );
+        })}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+  // Filter logic
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.filter-btn').forEach(b => {
+        b.classList.remove('active');
+        b.removeAttribute('variant-');
+      });
+      btn.classList.add('active');
+      btn.setAttribute('variant-', 'foreground0');
+
+      const filter = btn.getAttribute('data-filter');
+      document.querySelectorAll('.platform-row').forEach(row => {
+        if (filter === 'all') {
+          (row as HTMLElement).style.display = '';
+        } else {
+          const types = JSON.parse(row.getAttribute('data-revenue-types') || '[]');
+          (row as HTMLElement).style.display = types.includes(filter) ? '' : 'none';
+        }
+      });
+    });
+  });
+
+  // Sort logic
+  let sortDir: Record<string, boolean> = {};
+  document.querySelectorAll('.sortable').forEach(th => {
+    th.addEventListener('click', () => {
+      const sortKey = th.getAttribute('data-sort')!;
+      sortDir[sortKey] = !sortDir[sortKey];
+      const asc = sortDir[sortKey];
+      
+      const tbody = document.querySelector('#platform-table tbody')!;
+      const rows = Array.from(tbody.querySelectorAll('.platform-row'));
+      
+      rows.sort((a, b) => {
+        let valA: string | number, valB: string | number;
+        if (sortKey === 'name') {
+          valA = a.getAttribute('data-name') || '';
+          valB = b.getAttribute('data-name') || '';
+          return asc ? valA.localeCompare(valB, 'zh-CN') : valB.localeCompare(valA, 'zh-CN');
+        } else if (sortKey === 'cut-min') {
+          valA = parseFloat(a.getAttribute('data-cut-min') || '0');
+          valB = parseFloat(b.getAttribute('data-cut-min') || '0');
+        } else {
+          valA = parseFloat(a.getAttribute('data-cut-max') || '0');
+          valB = parseFloat(b.getAttribute('data-cut-max') || '0');
+        }
+        return asc ? (valA as number) - (valB as number) : (valB as number) - (valA as number);
+      });
+      
+      rows.forEach(row => tbody.appendChild(row));
+    });
+  });
+
+  // Set initial active state
+  document.querySelector('.filter-btn.active')?.setAttribute('variant-', 'foreground0');
+</script>
+
+<style is:global>
+  .filter-btn {
+    cursor: pointer;
+    border: 1px solid var(--surface1);
+    background: transparent;
+    color: var(--foreground1);
+    border-radius: 2px;
+    transition: all 0.15s;
+  }
+  .filter-btn:hover {
+    border-color: var(--foreground2);
+  }
+  .filter-btn.active {
+    border-color: var(--green);
+    color: var(--green);
+  }
+  .sortable:hover {
+    color: var(--sky);
+  }
+</style>

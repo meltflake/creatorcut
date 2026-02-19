@@ -1,0 +1,59 @@
+---
+import type { MonetizationMethod } from '../data/types';
+import { revenueTypeLabels } from '../data/types';
+import DataBadge from './DataBadge.astro';
+
+interface Props {
+  method: MonetizationMethod;
+}
+
+const { method } = Astro.props;
+---
+
+<div is-="box" style="padding: 1rem; margin-bottom: 0.75rem;">
+  <div class="flex items-center justify-between flex-wrap gap-1 mb-1">
+    <h3 style="margin: 0; color: var(--green); font-size: 1rem;">
+      {method.name}
+    </h3>
+    <span is-="badge" variant-="teal" style="font-size: 0.75rem;">
+      {revenueTypeLabels[method.type]}
+    </span>
+  </div>
+  
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-bottom: 0.75rem;">
+    <div>
+      <div style="color: var(--foreground2); font-size: 0.8rem;">平台抽成</div>
+      <div style="color: var(--red);">{method.platformCut}</div>
+    </div>
+    <div>
+      <div style="color: var(--foreground2); font-size: 0.8rem;">创作者到手</div>
+      <div style="color: var(--green);">{method.creatorCut}</div>
+    </div>
+  </div>
+
+  {method.threshold && (
+    <div style="margin-bottom: 0.5rem;">
+      <span style="color: var(--foreground2); font-size: 0.8rem;">门槛：</span>
+      <span style="font-size: 0.9rem;">{method.threshold}</span>
+    </div>
+  )}
+
+  {method.notes && (
+    <div style="margin-bottom: 0.5rem;">
+      <span style="color: var(--foreground2); font-size: 0.8rem;">备注：</span>
+      <span style="font-size: 0.85rem; color: var(--foreground1);">{method.notes}</span>
+    </div>
+  )}
+
+  <div class="flex items-center gap-1" style="margin-top: 0.5rem;">
+    <DataBadge type={method.source.type} />
+    {method.source.url ? (
+      <a href={method.source.url} style="color: var(--sky); font-size: 0.8rem;" target="_blank" rel="noopener">
+        {method.source.name}
+      </a>
+    ) : (
+      <span style="font-size: 0.8rem; color: var(--foreground2);">{method.source.name}</span>
+    )}
+    <span style="font-size: 0.75rem; color: var(--surface2);">({method.source.date})</span>
+  </div>
+</div>

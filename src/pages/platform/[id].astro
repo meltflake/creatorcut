@@ -1,0 +1,152 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import MonetizationCard from '../../components/MonetizationCard.astro';
+import { platforms } from '../../data/platforms/index';
+import { contentFormLabels } from '../../data/types';
+import type { GetStaticPaths } from 'astro';
+
+export const getStaticPaths: GetStaticPaths = () => {
+  return platforms.map(platform => ({
+    params: { id: platform.id },
+    props: { platform },
+  }));
+};
+
+const { platform } = Astro.props;
+const base = import.meta.env.BASE_URL;
+---
+
+<Layout title={`${platform.name} — CreatorCut`} description={`${platform.name}的创作者分成数据：变现方式、分成比例、入驻门槛。`}>
+  <Header />
+
+  <main>
+    <!-- Breadcrumb -->
+    <p style="color: var(--foreground2); font-size: 0.85rem; margin-bottom: 1rem;">
+      <a href={base} style="color: var(--sky);">首页</a>
+      <span> / </span>
+      <span>{platform.name}</span>
+    </p>
+
+    <!-- Platform header -->
+    <section class="mb-3">
+      <h1 style="color: var(--green); font-size: 1.8rem; margin-bottom: 0.25rem;">
+        {platform.name}
+      </h1>
+      {platform.nameEn && (
+        <p style="color: var(--foreground2); margin-top: 0; margin-bottom: 0.75rem;">
+          {platform.nameEn}
+        </p>
+      )}
+      
+      <div class="flex flex-wrap gap-1" style="font-size: 0.85rem; margin-bottom: 0.75rem;">
+        <span is-="badge" variant-="teal">{platform.type}</span>
+        <span is-="badge" variant-="blue">{platform.region === 'cn' ? '中国' : '全球'}</span>
+        {platform.foundedYear && (
+          <span is-="badge" variant-="lavender">成立 {platform.foundedYear}</span>
+        )}
+        {platform.mau && (
+          <span is-="badge" variant-="peach">月活 {platform.mau}</span>
+        )}
+      </div>
+
+      <div class="flex flex-wrap gap-1" style="font-size: 0.8rem; margin-bottom: 0.5rem;">
+        <span style="color: var(--foreground2);">内容形式：</span>
+        {platform.contentForms.map(cf => (
+          <span style="color: var(--foreground1);">{contentFormLabels[cf]}</span>
+        ))}
+      </div>
+
+      <div style="font-size: 0.85rem;">
+        <span style="color: var(--foreground2);">创作者到手范围：</span>
+        <span style="color: var(--green); font-weight: 700;">
+          {platform.creatorCutMin}% — {platform.creatorCutMax}%
+        </span>
+        <span style="color: var(--yellow); font-size: 0.8rem;">（不含税）</span>
+      </div>
+
+      <div style="margin-top: 0.5rem; font-size: 0.85rem;">
+        <a href={platform.url} style="color: var(--sky);" target="_blank" rel="noopener">
+          {platform.url} ↗
+        </a>
+      </div>
+    </section>
+
+    <!-- Monetization methods -->
+    <section class="mb-3">
+      <h2 style="color: var(--foreground0); font-size: 1.1rem; margin-bottom: 0.75rem;">
+        $ cat monetization.json | jq '.methods[]'
+      </h2>
+      {platform.monetization.map(method => (
+        <MonetizationCard method={method} />
+      ))}
+    </section>
+
+    <!-- Pros and Cons -->
+    <section class="mb-3">
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+        <div is-="box" style="padding: 1rem;">
+          <h3 style="color: var(--green); font-size: 1rem; margin-top: 0;">✓ 优势</h3>
+          <ul style="padding-left: 1.2rem; margin: 0;">
+            {platform.pros.map(pro => (
+              <li style="color: var(--foreground1); font-size: 0.85rem; margin-bottom: 0.3rem;">{pro}</li>
+            ))}
+          </ul>
+        </div>
+        <div is-="box" style="padding: 1rem;">
+          <h3 style="color: var(--red); font-size: 1rem; margin-top: 0;">✗ 劣势</h3>
+          <ul style="padding-left: 1.2rem; margin: 0;">
+            {platform.cons.map(con => (
+              <li style="color: var(--foreground1); font-size: 0.85rem; margin-bottom: 0.3rem;">{con}</li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Best for -->
+    <section class="mb-3">
+      <h2 style="color: var(--foreground0); font-size: 1rem; margin-bottom: 0.5rem;">适合什么创作者</h2>
+      <div class="flex flex-wrap gap-1">
+        {platform.bestFor.map(bf => (
+          <span is-="badge" variant-="green" style="font-size: 0.85rem;">{bf}</span>
+        ))}
+      </div>
+    </section>
+
+    <!-- Data sources -->
+    <section class="mb-2">
+      <h2 style="color: var(--foreground2); font-size: 0.9rem; margin-bottom: 0.5rem;">数据来源</h2>
+      <ul style="list-style: none; padding: 0; font-size: 0.8rem; color: var(--foreground2);">
+        {platform.monetization.map(m => (
+          <li style="margin-bottom: 0.3rem;">
+            {m.source.type === 'official' ? '🟢' : m.source.type === 'media' ? '🟡' : '⚪'}
+            {' '}
+            {m.source.url ? (
+              <a href={m.source.url} style="color: var(--sky);" target="_blank" rel="noopener">{m.source.name}</a>
+            ) : (
+              <span>{m.source.name}</span>
+            )}
+            {' '}({m.source.date})
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <!-- Last updated -->
+    <p style="color: var(--surface2); font-size: 0.8rem;">
+      最后更新：{platform.lastUpdated}
+    </p>
+  </main>
+
+  <Footer />
+</Layout>
+
+<style is:global>
+  @media (max-width: 640px) {
+    div[style*="grid-template-columns: 1fr 1fr"] {
+      grid-template-columns: 1fr !important;
+    }
+  }
+</style>
