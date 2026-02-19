@@ -26,6 +26,7 @@ export const toutiao: Platform = {
       source: {
         type: 'media',
         name: '创作者反馈',
+        url: 'https://mp.toutiao.com/docs/baike/2789/20639/',
         date: '2025-12',
       },
     },
@@ -42,6 +43,7 @@ export const toutiao: Platform = {
       source: {
         type: 'official',
         name: '头条创作者平台',
+        url: 'https://mp.toutiao.com/docs/mp',
         date: '2025-12',
       },
     },

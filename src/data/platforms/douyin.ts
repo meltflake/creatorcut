@@ -26,6 +26,7 @@ export const douyin: Platform = {
       source: {
         type: 'media',
         name: '行业报道及创作者反馈',
+        url: 'https://www.jiemian.com/article/5310425.html',
         date: '2025-12',
       },
     },
@@ -59,6 +60,7 @@ export const douyin: Platform = {
       source: {
         type: 'media',
         name: '创作者反馈及行业估算',
+        url: 'https://www.geekpark.net/news/280121',
         date: '2025-12',
       },
     },

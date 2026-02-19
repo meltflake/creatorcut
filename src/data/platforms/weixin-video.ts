@@ -26,6 +26,7 @@ export const weixinVideo: Platform = {
       source: {
         type: 'estimate',
         name: '行业估算',
+        url: 'https://support.weixin.qq.com/cgi-bin/mmsupportacctnodeweb-bin/pages/flrux77QlRxPwwhY',
         date: '2025-12',
       },
     },
@@ -42,6 +43,7 @@ export const weixinVideo: Platform = {
       source: {
         type: 'media',
         name: '创作者反馈',
+        url: 'https://developers.weixin.qq.com/community/minihome/doc/0006040d4f44885278c04444066c00',
         date: '2025-12',
       },
     },
@@ -58,6 +60,7 @@ export const weixinVideo: Platform = {
       source: {
         type: 'official',
         name: '微信官方',
+        url: 'https://support.weixin.qq.com/cgi-bin/mmsupportacctnodeweb-bin/pages/V838SRNPiAcPJ8yh',
         date: '2025-12',
       },
     },
@@ -74,6 +77,7 @@ export const weixinVideo: Platform = {
       source: {
         type: 'estimate',
         name: '行业估算',
+        url: 'https://huxuan.qq.com/trade/free/help_detail',
         date: '2025-12',
       },
     },

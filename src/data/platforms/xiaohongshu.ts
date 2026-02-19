@@ -26,6 +26,7 @@ export const xiaohongshu: Platform = {
       source: {
         type: 'official',
         name: '小红书蒲公英平台',
+        url: 'https://pgy.xiaohongshu.com',
         date: '2025-12',
       },
     },
@@ -42,6 +43,7 @@ export const xiaohongshu: Platform = {
       source: {
         type: 'media',
         name: '行业报道',
+        url: 'https://www.doutianshi.com/42725.html',
         date: '2025-12',
       },
     },
@@ -58,6 +60,7 @@ export const xiaohongshu: Platform = {
       source: {
         type: 'media',
         name: '行业报道',
+        url: 'https://www.jiemian.com/article/9407377.html',
         date: '2025-12',
       },
     },

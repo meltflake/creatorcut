@@ -26,6 +26,7 @@ export const zhihu: Platform = {
       source: {
         type: 'media',
         name: '知乎盐选作者反馈',
+        url: 'https://zhuanlan.zhihu.com/p/614536709',
         date: '2025-12',
       },
     },
@@ -42,6 +43,7 @@ export const zhihu: Platform = {
       source: {
         type: 'media',
         name: '知乎创作者反馈',
+        url: 'https://www.zhihu.com/question/551563502/answer/3153556903',
         date: '2025-12',
       },
     },

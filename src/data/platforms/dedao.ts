@@ -26,6 +26,7 @@ export const dedao: Platform = {
       source: {
         type: 'media',
         name: '行业报道',
+        url: 'https://www.jiemian.com/article/1160543.html',
         date: '2025-12',
       },
     },
@@ -42,6 +43,7 @@ export const dedao: Platform = {
       source: {
         type: 'media',
         name: '行业报道',
+        url: 'https://zhuanlan.zhihu.com/p/28050744',
         date: '2025-12',
       },
     },

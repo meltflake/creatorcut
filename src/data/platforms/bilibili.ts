@@ -43,6 +43,7 @@ export const bilibili: Platform = {
       source: {
         type: 'media',
         name: '行业报道',
+        url: 'https://news.qq.com/rain/a/20250524A047PE00',
         date: '2025-12',
       },
     },
@@ -59,6 +60,7 @@ export const bilibili: Platform = {
       source: {
         type: 'official',
         name: 'B 站充电计划',
+        url: 'https://www.bilibili.com/html/charge_plan_user_agreement.html',
         date: '2025-12',
       },
     },
@@ -75,6 +77,7 @@ export const bilibili: Platform = {
       source: {
         type: 'media',
         name: '创作者反馈',
+        url: 'https://link.bilibili.com/p/help/index',
         date: '2025-12',
       },
     },
@@ -91,6 +94,7 @@ export const bilibili: Platform = {
       source: {
         type: 'official',
         name: 'B 站花火平台',
+        url: 'https://huahuo.bilibili.com',
         date: '2025-12',
       },
     },
@@ -107,6 +111,7 @@ export const bilibili: Platform = {
       source: {
         type: 'media',
         name: '行业报道',
+        url: 'https://www.woshipm.com/pd/5927659.html',
         date: '2025-12',
       },
     },

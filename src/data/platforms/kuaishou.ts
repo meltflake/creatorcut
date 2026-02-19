@@ -26,6 +26,7 @@ export const kuaishou: Platform = {
       source: {
         type: 'media',
         name: '行业报道及创作者反馈',
+        url: 'https://www.jiemian.com/article/5310425.html',
         date: '2025-12',
       },
     },
@@ -42,6 +43,7 @@ export const kuaishou: Platform = {
       source: {
         type: 'official',
         name: '快手电商官方',
+        url: 'https://www.kuaishou.com/help/feedback/2767?categoryId=hot',
         date: '2025-12',
       },
     },
@@ -58,6 +60,7 @@ export const kuaishou: Platform = {
       source: {
         type: 'media',
         name: '行业报道',
+        url: 'https://k.kuaishou.com',
         date: '2025-12',
       },
     },

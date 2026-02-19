@@ -26,6 +26,7 @@ export const ximalaya: Platform = {
       source: {
         type: 'media',
         name: '创作者反馈及行业报道',
+        url: 'https://zhuanlan.zhihu.com/p/718576793',
         date: '2025-12',
       },
     },
@@ -42,6 +43,7 @@ export const ximalaya: Platform = {
       source: {
         type: 'media',
         name: '行业报道',
+        url: 'https://www.jiemian.com/article/4846027.html',
         date: '2025-12',
       },
     },
@@ -58,6 +60,7 @@ export const ximalaya: Platform = {
       source: {
         type: 'media',
         name: '创作者反馈',
+        url: 'https://m.mp.oeeee.com/a/BAAFRD000020200415302391.html',
         date: '2025-12',
       },
     },
@@ -74,6 +77,7 @@ export const ximalaya: Platform = {
       source: {
         type: 'media',
         name: '行业报道及录制者反馈',
+        url: 'https://m.ximalaya.com/ask/t646985',
         date: '2025-12',
       },
     },

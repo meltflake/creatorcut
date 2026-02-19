@@ -26,6 +26,7 @@ export const xiaoyuzhou: Platform = {
       source: {
         type: 'estimate',
         name: '行业估算',
+        url: 'https://www.cbndata.com/information/293925',
         date: '2025-12',
       },
     },
@@ -42,6 +43,7 @@ export const xiaoyuzhou: Platform = {
       source: {
         type: 'estimate',
         name: '行业估算',
+        url: 'https://www.woshipm.com/evaluating/6213335.html',
         date: '2025-12',
       },
     },
