@@ -10,6 +10,9 @@ import { ximalaya } from './ximalaya';
 import { toutiao } from './toutiao';
 import { xiaoyuzhou } from './xiaoyuzhou';
 import { dedao } from './dedao';
+import { xiaoetong } from './xiaoetong';
+import { xiaobaotong } from './xiaobaotong';
+import { afdian } from './afdian';
 import type { Platform } from '../types';
 
 export const platforms: Platform[] = [
@@ -25,6 +28,9 @@ export const platforms: Platform[] = [
   toutiao,
   xiaoyuzhou,
   dedao,
+  xiaoetong,
+  xiaobaotong,
+  afdian,
 ];
 
 export {
@@ -40,4 +46,7 @@ export {
   toutiao,
   xiaoyuzhou,
   dedao,
+  xiaoetong,
+  xiaobaotong,
+  afdian,
 };
