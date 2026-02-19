@@ -37,6 +37,7 @@ export const dedao: Platform = {
       creatorCutMin: 70,
       creatorCutMax: 70,
       threshold: '签约出版',
+      entryCost: '签约制',
       notes: '电子书分成相对友好',
       source: {
         type: 'media',

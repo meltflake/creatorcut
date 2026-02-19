@@ -2,7 +2,31 @@
 import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
-import PlatformTable from '../components/PlatformTable.astro';
+import RevenueTable from '../components/RevenueTable.astro';
+import { platforms } from '../data/platforms/index';
+import { revenueTypeLabels } from '../data/types';
+import type { RevenueType } from '../data/types';
+
+// Revenue types in display order
+const revenueTypeOrder: RevenueType[] = [
+  'subscription',
+  'tipping',
+  'ecommerce',
+  'ads',
+  'sponsorship',
+  'course',
+  'newsletter',
+  'affiliate',
+  'digital-goods',
+];
+
+// Collect all revenue types that actually have data
+const activeRevenueTypes = revenueTypeOrder.filter(rt =>
+  platforms.some(p => p.monetization.some(m => m.type === rt))
+);
+
+// Count total monetization methods
+const totalMethods = platforms.reduce((sum, p) => sum + p.monetization.length, 0);
 ---
 
 <Layout>
@@ -19,6 +43,9 @@ import PlatformTable from '../components/PlatformTable.astro';
       </p>
       <p style="color: var(--foreground2); font-size: 0.85rem; margin-top: 0.5rem;">
         数据为王，来源透明，保持中立。帮助创作者做出更明智的平台选择。
+      </p>
+      <p style="color: var(--sky); font-size: 0.85rem; margin-top: 0.5rem;">
+        覆盖 {platforms.length} 个平台，{totalMethods} 种变现方式
       </p>
     </section>
 
@@ -38,12 +65,32 @@ import PlatformTable from '../components/PlatformTable.astro';
       </div>
     </section>
 
-    <!-- Platform table -->
+    <!-- Revenue type tables -->
     <section>
-      <h2 style="color: var(--foreground0); font-size: 1.1rem; margin-bottom: 0.75rem;">
-        $ ls platforms/ --sort=creator_cut
+      <h2 style="color: var(--foreground0); font-size: 1.1rem; margin-bottom: 1rem;">
+        $ ls --group-by=revenue_type
       </h2>
-      <PlatformTable />
+
+      <!-- Quick nav -->
+      <div class="flex flex-wrap gap-1 mb-3" style="align-items: center;">
+        <span style="color: var(--foreground2); font-size: 0.85rem;">跳转：</span>
+        {activeRevenueTypes.map(rt => (
+          <a 
+            href={`#rt-${rt}`}
+            style="font-size: 0.75rem; padding: 0.2rem 0.5rem; border: 1px solid var(--surface1); color: var(--foreground1); text-decoration: none; border-radius: 2px;"
+            class="nav-btn"
+          >
+            {revenueTypeLabels[rt]}
+          </a>
+        ))}
+      </div>
+
+      {activeRevenueTypes.map((rt, i) => (
+        <div id={`rt-${rt}`}>
+          <RevenueTable revenueType={rt} tableIndex={i} />
+        </div>
+      ))}
+
       <p style="color: var(--foreground2); font-size: 0.8rem; margin-top: 0.75rem;">
         * 所有分成比例均为税前（不含税）。点击表头可排序，点击平台名称查看详情。
       </p>
@@ -52,3 +99,68 @@ import PlatformTable from '../components/PlatformTable.astro';
 
   <Footer />
 </Layout>
+
+<script>
+  // Sort logic for all revenue tables
+  let sortDir: Record<string, boolean> = {};
+  
+  document.querySelectorAll('.sortable').forEach(th => {
+    th.addEventListener('click', () => {
+      const sortKey = th.getAttribute('data-sort')!;
+      const tableId = th.getAttribute('data-table')!;
+      const dirKey = `${tableId}-${sortKey}`;
+      sortDir[dirKey] = !sortDir[dirKey];
+      const asc = sortDir[dirKey];
+      
+      const tbody = document.querySelector(`#${tableId} tbody`)!;
+      const rows = Array.from(tbody.querySelectorAll('.revenue-row'));
+      
+      rows.sort((a, b) => {
+        let valA: string | number, valB: string | number;
+        if (sortKey === 'name') {
+          valA = a.getAttribute('data-name') || '';
+          valB = b.getAttribute('data-name') || '';
+          return asc ? valA.localeCompare(valB, 'zh-CN') : valB.localeCompare(valA, 'zh-CN');
+        } else if (sortKey === 'cut-max') {
+          valA = parseFloat(a.getAttribute('data-cut-max') || '0');
+          valB = parseFloat(b.getAttribute('data-cut-max') || '0');
+        } else if (sortKey === 'founded') {
+          valA = parseFloat(a.getAttribute('data-founded') || '0');
+          valB = parseFloat(b.getAttribute('data-founded') || '0');
+        } else {
+          valA = 0;
+          valB = 0;
+        }
+        return asc ? (valA as number) - (valB as number) : (valB as number) - (valA as number);
+      });
+      
+      rows.forEach(row => tbody.appendChild(row));
+    });
+  });
+</script>
+
+<style is:global>
+  .nav-btn:hover {
+    border-color: var(--green) !important;
+    color: var(--green) !important;
+  }
+  .sortable:hover {
+    color: var(--sky);
+  }
+  .notes-cell {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .revenue-table th {
+    text-align: left;
+    padding: 0.4rem 0.5rem;
+    border-bottom: 1px solid var(--surface1);
+  }
+  .revenue-table td {
+    padding: 0.4rem 0.5rem;
+    border-bottom: 1px solid var(--surface0);
+  }
+  .revenue-table tr:hover td {
+    background: var(--surface0);
+  }
+</style>

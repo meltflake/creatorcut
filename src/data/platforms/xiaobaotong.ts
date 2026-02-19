@@ -21,6 +21,7 @@ export const xiaobaotong: Platform = {
       creatorCutMin: 85,
       creatorCutMax: 85,
       threshold: '申请开通创作者账号',
+      entryCost: '免费',
       notes: '适合与读者建立长期关系。订阅自动到期提醒。提现时另有云账户约 6% 服务费 + 个税代扣（非平台收取）',
       source: {
         type: 'official',
@@ -37,6 +38,7 @@ export const xiaobaotong: Platform = {
       creatorCutMin: 85,
       creatorCutMax: 85,
       threshold: '申请开通创作者账号',
+      entryCost: '免费',
       notes: '适合把知识广泛持续传播。一次购买永久阅读。每个创作者可开通多个专栏',
       source: {
         type: 'official',
@@ -53,6 +55,7 @@ export const xiaobaotong: Platform = {
       creatorCutMin: 50,
       creatorCutMax: 100,
       threshold: '作者开通合伙人计划',
+      entryCost: '免费',
       notes: '分销者获得的佣金不收取平台服务费，全额进入钱包',
       source: {
         type: 'official',

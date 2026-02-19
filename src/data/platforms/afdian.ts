@@ -21,6 +21,7 @@ export const afdian: Platform = {
       creatorCutMin: 94,
       creatorCutMax: 94,
       threshold: '无门槛，注册即可开通',
+      entryCost: '免费',
       notes: '中国版 Patreon。支持按月/季/年订阅。创作者可设置多个不同价位的赞助方案',
       source: {
         type: 'official',
@@ -37,6 +38,7 @@ export const afdian: Platform = {
       creatorCutMin: 94,
       creatorCutMax: 94,
       threshold: '无门槛',
+      entryCost: '免费',
       notes: '支持支付宝和微信支付。粉丝可自定义赞助金额',
       source: {
         type: 'official',
@@ -53,6 +55,7 @@ export const afdian: Platform = {
       creatorCutMin: 94,
       creatorCutMax: 94,
       threshold: '无门槛',
+      entryCost: '免费',
       notes: '支持图文、视频、音频、文件等多种内容形式的付费解锁',
       source: {
         type: 'official',

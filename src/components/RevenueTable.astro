@@ -1,0 +1,104 @@
+---
+import { platforms } from '../data/platforms/index';
+import { revenueTypeLabels } from '../data/types';
+import type { RevenueType, MonetizationMethod, Platform } from '../data/types';
+
+interface Props {
+  revenueType: RevenueType;
+  tableIndex: number;
+}
+
+const { revenueType, tableIndex } = Astro.props;
+const base = import.meta.env.BASE_URL;
+const label = revenueTypeLabels[revenueType];
+
+// Collect all monetization methods of this revenue type across platforms
+interface TableRow {
+  platform: Platform;
+  method: MonetizationMethod;
+}
+
+const rows: TableRow[] = [];
+platforms.forEach(p => {
+  p.monetization.forEach(m => {
+    if (m.type === revenueType) {
+      rows.push({ platform: p, method: m });
+    }
+  });
+});
+
+// Sort by creatorCutMax descending by default (best for creators first)
+rows.sort((a, b) => (b.method.creatorCutMax ?? 0) - (a.method.creatorCutMax ?? 0));
+
+// Helper to determine color for creator cut
+function cutColor(val: number | undefined): string {
+  if (val === undefined) return 'var(--foreground1)';
+  if (val >= 80) return 'var(--green)';
+  if (val >= 50) return 'var(--peach)';
+  return 'var(--red)';
+}
+
+// Helper for entry cost color
+function entryCostColor(cost: string | undefined): string {
+  if (!cost || cost === '免费') return 'var(--green)';
+  return 'var(--peach)';
+}
+
+const tableId = `revenue-table-${tableIndex}`;
+---
+
+<div class="revenue-section" style="margin-bottom: 2rem;">
+  <h3 style="color: var(--yellow); font-size: 1rem; margin-bottom: 0.5rem; font-family: monospace;">
+    $ cat {revenueType}.csv <span style="color: var(--foreground2); font-size: 0.8rem; font-weight: normal; margin-left: 0.5rem;">// {label}</span>
+  </h3>
+  
+  <div class="table-wrap">
+    <table id={tableId} class="revenue-table" style="width: 100%; font-size: 0.85rem;">
+      <thead>
+        <tr>
+          <th class="sortable" data-sort="name" data-table={tableId} style="cursor: pointer; white-space: nowrap;">
+            平台 ↕
+          </th>
+          <th style="white-space: nowrap;">变现方式</th>
+          <th class="sortable" data-sort="cut-max" data-table={tableId} style="cursor: pointer; white-space: nowrap;">
+            创作者到手 ↕
+          </th>
+          <th style="white-space: nowrap;">平台抽成</th>
+          <th style="white-space: nowrap;">入门成本</th>
+          <th style="white-space: nowrap;">备注</th>
+          <th class="sortable" data-sort="founded" data-table={tableId} style="cursor: pointer; white-space: nowrap;">
+            成立 ↕
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        {rows.map(({ platform: p, method: m }) => (
+          <tr 
+            class="revenue-row"
+            data-name={p.name}
+            data-cut-max={m.creatorCutMax ?? 0}
+            data-founded={p.foundedYear || 0}
+          >
+            <td>
+              <a href={`${base}platform/${p.id}`} style="color: var(--green); font-weight: 500; white-space: nowrap;">
+                {p.name}
+              </a>
+            </td>
+            <td style="color: var(--foreground1); font-size: 0.8rem;">{m.name}</td>
+            <td style={`color: ${cutColor(m.creatorCutMax)}; white-space: nowrap;`}>
+              {m.creatorCut}
+            </td>
+            <td style="color: var(--foreground2); font-size: 0.8rem;">{m.platformCut}</td>
+            <td style={`color: ${entryCostColor(m.entryCost)}; font-size: 0.8rem; white-space: nowrap;`}>
+              {m.entryCost || '免费'}
+            </td>
+            <td style="color: var(--foreground2); font-size: 0.78rem; max-width: 16rem;" class="notes-cell">
+              {m.notes || '—'}
+            </td>
+            <td style="color: var(--foreground2); white-space: nowrap;">{p.foundedYear || '—'}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+</div>

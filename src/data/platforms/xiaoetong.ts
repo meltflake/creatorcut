@@ -21,6 +21,7 @@ export const xiaoetong: Platform = {
       creatorCutMin: 98,
       creatorCutMax: 100,
       threshold: '需购买年费版本：基础版 6,800 元/年、专业版 12,800 元/年、旗舰版 25,800 元/年',
+      entryCost: '年费 6,800-25,800 元/年',
       notes: 'SaaS 工具模式，非分成模式。各版本赠送免抽佣额度：基础版 25 万、专业版 50 万、旗舰版 125 万。超出部分收取 2% 技术服务费。额度内创作者拿 100%',
       source: {
         type: 'official',
@@ -37,6 +38,7 @@ export const xiaoetong: Platform = {
       creatorCutMin: 98,
       creatorCutMax: 100,
       threshold: '同课程售卖，共享年度额度',
+      entryCost: '年费 6,800-25,800 元/年',
       notes: '支持会员体系、付费圈子等多种订阅形态，抽佣规则与课程售卖一致',
       source: {
         type: 'official',
@@ -53,6 +55,7 @@ export const xiaoetong: Platform = {
       creatorCutMin: 98,
       creatorCutMax: 100,
       threshold: '需开通对应版本功能',
+      entryCost: '年费 6,800-25,800 元/年',
       notes: '支持直播带货、实物商城。虚拟商品和实物商品的流水均计入年度额度',
       source: {
         type: 'official',
