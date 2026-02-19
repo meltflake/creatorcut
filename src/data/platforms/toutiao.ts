@@ -21,6 +21,7 @@ export const toutiao: Platform = {
       creatorCutMin: 50,
       creatorCutMax: 70,
       threshold: '开通创作收益',
+      entryCost: '免费',
       notes: '按阅读量+广告展示计算',
       source: {
         type: 'media',
@@ -36,6 +37,7 @@ export const toutiao: Platform = {
       creatorCutMin: 50,
       creatorCutMax: 70,
       threshold: '申请加入',
+      entryCost: '免费',
       notes: '与抖音中视频计划打通，按播放量、互动率、完播率综合分配',
       source: {
         type: 'official',
@@ -55,5 +57,5 @@ export const toutiao: Platform = {
     '内容调性偏大众，不利于垂直内容',
   ],
   bestFor: ['图文创作者', '中视频创作者', '新闻/资讯类创作者'],
-  lastUpdated: '2025-12-31',
+  lastUpdated: '2026-02-19',
 };

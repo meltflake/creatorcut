@@ -21,6 +21,7 @@ export const kuaishou: Platform = {
       creatorCutMin: 70,
       creatorCutMax: 70,
       threshold: '无硬性门槛',
+      entryCost: '免费',
       notes: '行业内较高水平，个人主播统一 70%',
       source: {
         type: 'media',
@@ -36,6 +37,7 @@ export const kuaishou: Platform = {
       creatorCutMin: 10,
       creatorCutMax: 30,
       threshold: '开通快手小店',
+      entryCost: '免费',
       notes: '信任电商，复购率高；平台收取技术服务费',
       source: {
         type: 'official',
@@ -51,6 +53,7 @@ export const kuaishou: Platform = {
       creatorCutMin: 90,
       creatorCutMax: 95,
       threshold: '粉丝及内容要求',
+      entryCost: '免费',
       notes: '下沉市场品牌多',
       source: {
         type: 'media',
@@ -70,5 +73,5 @@ export const kuaishou: Platform = {
     '短剧分账需签约合作，门槛较高',
   ],
   bestFor: ['直播打赏型主播', '下沉市场带货达人', '信任电商从业者'],
-  lastUpdated: '2025-12-31',
+  lastUpdated: '2026-02-19',
 };

@@ -21,6 +21,7 @@ export const zsxq: Platform = {
       creatorCutMin: 80,
       creatorCutMax: 80,
       threshold: '无门槛',
+      entryCost: '免费',
       notes: '知识付费赛道里抽成最低之一',
       source: {
         type: 'official',
@@ -37,6 +38,7 @@ export const zsxq: Platform = {
       creatorCutMin: 90,
       creatorCutMax: 95,
       threshold: '企业认证',
+      entryCost: '企业认证',
       notes: '10 万内收 10%，超出部分收 5%，阶梯递减',
       source: {
         type: 'official',
@@ -53,6 +55,7 @@ export const zsxq: Platform = {
       creatorCutMin: 80,
       creatorCutMax: 95,
       threshold: '无门槛',
+      entryCost: '免费',
       notes: '与星球加入费抽成比例相同',
       source: {
         type: 'official',
@@ -73,5 +76,5 @@ export const zsxq: Platform = {
     '缺乏公域推荐，需要创作者自带流量',
   ],
   bestFor: ['知识付费创作者', '私域社群运营者', '行业专家'],
-  lastUpdated: '2025-12-31',
+  lastUpdated: '2026-02-19',
 };

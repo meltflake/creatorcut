@@ -21,6 +21,7 @@ export const weixinVideo: Platform = {
       creatorCutMin: 50,
       creatorCutMax: 70,
       threshold: '开通原创声明',
+      entryCost: '免费',
       notes: '具体分成比例未公开，按播放量、互动量和广告匹配综合计算',
       source: {
         type: 'estimate',
@@ -36,6 +37,7 @@ export const weixinVideo: Platform = {
       creatorCutMin: 50,
       creatorCutMax: 50,
       threshold: '开通直播',
+      entryCost: '免费',
       notes: '起步较晚，政策变动较多',
       source: {
         type: 'media',
@@ -51,6 +53,7 @@ export const weixinVideo: Platform = {
       creatorCutMin: 10,
       creatorCutMax: 30,
       threshold: '开通视频号小店',
+      entryCost: '免费',
       notes: '私域优势明显，复购率高；依托微信生态',
       source: {
         type: 'official',
@@ -66,6 +69,7 @@ export const weixinVideo: Platform = {
       creatorCutMin: 80,
       creatorCutMax: 95,
       threshold: '平台邀请',
+      entryCost: '免费',
       notes: '起步较晚，商单规模仍在增长',
       source: {
         type: 'estimate',
@@ -85,5 +89,5 @@ export const weixinVideo: Platform = {
     '平台政策变动频繁',
   ],
   bestFor: ['有私域流量的创作者', '微信生态从业者', '高客单价带货达人'],
-  lastUpdated: '2025-12-31',
+  lastUpdated: '2026-02-19',
 };

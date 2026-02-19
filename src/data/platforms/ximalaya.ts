@@ -21,6 +21,7 @@ export const ximalaya: Platform = {
       creatorCutMin: 20,
       creatorCutMax: 40,
       threshold: '开通付费专辑',
+      entryCost: '免费',
       notes: '平台抽成较重，头部主播可谈到更好条件',
       source: {
         type: 'media',
@@ -36,6 +37,7 @@ export const ximalaya: Platform = {
       creatorCutMin: 20,
       creatorCutMax: 40,
       threshold: '上架会员内容',
+      entryCost: '免费',
       notes: '类似 Spotify 模式，按收听时长在会员池中分配',
       source: {
         type: 'media',
@@ -51,6 +53,7 @@ export const ximalaya: Platform = {
       creatorCutMin: 50,
       creatorCutMax: 80,
       threshold: '开通直播',
+      entryCost: '免费',
       notes: '按开播天数和月流水阶梯提升分成比例',
       source: {
         type: 'media',
@@ -66,6 +69,7 @@ export const ximalaya: Platform = {
       creatorCutMin: 10,
       creatorCutMax: 25,
       threshold: '签约录制',
+      entryCost: '签约制',
       notes: '固定时薪 80-100 元/小时，加上 10-25% 的销售分成',
       source: {
         type: 'media',
@@ -85,5 +89,5 @@ export const ximalaya: Platform = {
     '音频市场整体增速放缓',
   ],
   bestFor: ['音频创作者', '有声书录制者', '播客主播'],
-  lastUpdated: '2025-12-31',
+  lastUpdated: '2026-02-19',
 };

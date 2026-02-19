@@ -21,6 +21,7 @@ export const douyin: Platform = {
       creatorCutMin: 50,
       creatorCutMax: 80,
       threshold: '无硬性门槛，公会另议',
+      entryCost: '免费',
       notes: '个人主播基础 50%；公会主播 45-55%（含公会分成后），公会基础 45%，任务加成最高 55%',
       source: {
         type: 'media',
@@ -36,6 +37,7 @@ export const douyin: Platform = {
       creatorCutMin: 10,
       creatorCutMax: 30,
       threshold: '开通商品橱窗',
+      entryCost: '免费',
       notes: '精选联盟撮合，规模最大；平台收技术服务费，佣金由商家设定',
       source: {
         type: 'official',
@@ -52,6 +54,7 @@ export const douyin: Platform = {
       creatorCutMin: 30,
       creatorCutMax: 70,
       threshold: '发布 1 分钟以上横版视频',
+      entryCost: '免费',
       notes: '按播放量分成，需发布横版中视频',
       source: {
         type: 'media',
@@ -67,6 +70,7 @@ export const douyin: Platform = {
       creatorCutMin: 90,
       creatorCutMax: 95,
       threshold: '粉丝及内容质量要求',
+      entryCost: '免费',
       notes: '规模最大的商单撮合平台，MCN 深度参与',
       source: {
         type: 'official',
@@ -87,5 +91,5 @@ export const douyin: Platform = {
     '竞争极其激烈，中小创作者突围困难',
   ],
   bestFor: ['短视频创作者', '直播带货达人', '品牌合作博主'],
-  lastUpdated: '2025-12-31',
+  lastUpdated: '2026-02-19',
 };

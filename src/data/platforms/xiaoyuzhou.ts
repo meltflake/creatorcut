@@ -21,6 +21,7 @@ export const xiaoyuzhou: Platform = {
       creatorCutMin: 70,
       creatorCutMax: 90,
       threshold: '开通付费',
+      entryCost: '免费',
       notes: '早期阶段，具体分成比例未公开，据行业估算创作者拿大头',
       source: {
         type: 'estimate',
@@ -36,6 +37,7 @@ export const xiaoyuzhou: Platform = {
       creatorCutMin: 70,
       creatorCutMax: 90,
       threshold: '无门槛',
+      entryCost: '免费',
       notes: '具体抽成比例未公开',
       source: {
         type: 'estimate',
@@ -55,5 +57,5 @@ export const xiaoyuzhou: Platform = {
     '播客市场整体商业化程度低',
   ],
   bestFor: ['播客创作者', '深度对话/访谈类内容创作者'],
-  lastUpdated: '2025-12-31',
+  lastUpdated: '2026-02-19',
 };

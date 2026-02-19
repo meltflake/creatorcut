@@ -21,6 +21,7 @@ export const bilibili: Platform = {
       creatorCutMin: 0,
       creatorCutMax: 100,
       threshold: '电磁力达标',
+      entryCost: '免费',
       notes: '2024 年激励上限设为 2000 元/月，中小 UP 主收入骤降',
       source: {
         type: 'official',
@@ -37,6 +38,7 @@ export const bilibili: Platform = {
       creatorCutMin: 25,
       creatorCutMax: 25,
       threshold: '开通广告分成',
+      entryCost: '免费',
       notes: '2025 年从 40% 下调到 25%，引发争议',
       source: {
         type: 'media',
@@ -52,6 +54,7 @@ export const bilibili: Platform = {
       creatorCutMin: 70,
       creatorCutMax: 70,
       threshold: '开通充电',
+      entryCost: '免费',
       notes: '非直播打赏，类似订阅支持',
       source: {
         type: 'official',
@@ -67,6 +70,7 @@ export const bilibili: Platform = {
       creatorCutMin: 50,
       creatorCutMax: 55,
       threshold: '开通直播',
+      entryCost: '免费',
       notes: '直播打赏分成中等偏低',
       source: {
         type: 'media',
@@ -82,6 +86,7 @@ export const bilibili: Platform = {
       creatorCutMin: 93,
       creatorCutMax: 95,
       threshold: '1 万粉丝+',
+      entryCost: '10,000+ 粉丝',
       notes: '年轻人品牌，单价较高',
       source: {
         type: 'official',
@@ -97,6 +102,7 @@ export const bilibili: Platform = {
       creatorCutMin: 10,
       creatorCutMax: 30,
       threshold: '开通带货',
+      entryCost: '免费',
       notes: '大开环模式，跳转淘宝/京东',
       source: {
         type: 'media',
@@ -116,5 +122,5 @@ export const bilibili: Platform = {
     '电商闭环弱，带货需跳转外部平台',
   ],
   bestFor: ['中长视频创作者', '知识科普 UP 主', '品牌合作博主'],
-  lastUpdated: '2025-12-31',
+  lastUpdated: '2026-02-19',
 };

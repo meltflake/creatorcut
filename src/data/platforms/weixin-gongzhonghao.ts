@@ -21,6 +21,7 @@ export const weixinGongzhonghao: Platform = {
       creatorCutMin: 70,
       creatorCutMax: 70,
       threshold: '500+ 粉丝',
+      entryCost: '500+ 粉丝',
       notes: 'CPM/CPC，按广告展示和点击计算',
       source: {
         type: 'official',
@@ -37,6 +38,7 @@ export const weixinGongzhonghao: Platform = {
       creatorCutMin: 100,
       creatorCutMax: 100,
       threshold: '开通原创声明',
+      entryCost: '免费',
       notes: '平台完全不抽成，创作者全拿',
       source: {
         type: 'official',
@@ -53,6 +55,7 @@ export const weixinGongzhonghao: Platform = {
       creatorCutMin: 100,
       creatorCutMax: 100,
       threshold: '开通原创声明',
+      entryCost: '免费',
       notes: '平台完全不抽成',
       source: {
         type: 'official',
@@ -73,5 +76,5 @@ export const weixinGongzhonghao: Platform = {
     '图文形式在短视频时代竞争力下降',
   ],
   bestFor: ['深度图文创作者', '知识付费作者', '有私域粉丝基础的创作者'],
-  lastUpdated: '2025-12-31',
+  lastUpdated: '2026-02-19',
 };

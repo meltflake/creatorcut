@@ -73,5 +73,5 @@ export const afdian: Platform = {
     '功能相对基础，缺乏高级营销工具',
   ],
   bestFor: ['独立创作者', '二次元/同人创作者', '开源开发者', '插画师/设计师'],
-  lastUpdated: '2025-12-31',
+  lastUpdated: '2026-02-19',
 };

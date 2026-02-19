@@ -21,6 +21,7 @@ export const dedao: Platform = {
       creatorCutMin: 50,
       creatorCutMax: 50,
       threshold: '邀约制（平台邀请）',
+      entryCost: '邀约制',
       notes: '平台深度参与课程制作和推广，非自助上架',
       source: {
         type: 'media',
@@ -55,5 +56,5 @@ export const dedao: Platform = {
     '内容形式单一，以知识付费为主',
   ],
   bestFor: ['知名专家/学者', '已有影响力的知识创作者', '图书作者'],
-  lastUpdated: '2025-12-31',
+  lastUpdated: '2026-02-19',
 };

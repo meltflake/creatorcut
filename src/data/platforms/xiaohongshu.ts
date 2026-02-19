@@ -21,6 +21,7 @@ export const xiaohongshu: Platform = {
       creatorCutMin: 100,
       creatorCutMax: 100,
       threshold: '1000 粉丝+',
+      entryCost: '1,000+ 粉丝',
       notes: '独特模式：品牌付服务费，博主端不二次抽佣，行业独树一帜',
       source: {
         type: 'official',
@@ -36,6 +37,7 @@ export const xiaohongshu: Platform = {
       creatorCutMin: 80,
       creatorCutMax: 80,
       threshold: '开通直播带货',
+      entryCost: '免费',
       notes: '"买手电商"定位，客单价高',
       source: {
         type: 'media',
@@ -51,6 +53,7 @@ export const xiaohongshu: Platform = {
       creatorCutMin: 10,
       creatorCutMax: 30,
       threshold: '开通带货',
+      entryCost: '免费',
       notes: '通过笔记挂商品链接，赚取佣金',
       source: {
         type: 'media',
@@ -70,5 +73,5 @@ export const xiaohongshu: Platform = {
     '平台对品类有偏好，非生活方式类内容曝光受限',
   ],
   bestFor: ['生活方式博主', '美妆/时尚创作者', '买手电商从业者'],
-  lastUpdated: '2025-12-31',
+  lastUpdated: '2026-02-19',
 };

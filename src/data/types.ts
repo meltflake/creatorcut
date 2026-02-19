@@ -50,6 +50,7 @@ export interface MonetizationMethod {
   creatorCutMin?: number;
   creatorCutMax?: number;
   threshold?: string;
+  entryCost?: string;  // e.g. '免费', '年费 6,800-25,800 元/年', '500+ 粉丝'
   notes?: string;
   source: DataSource;
 }

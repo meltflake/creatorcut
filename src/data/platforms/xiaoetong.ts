@@ -72,5 +72,5 @@ export const xiaoetong: Platform = {
     '共享 APP，非独立品牌 APP',
   ],
   bestFor: ['知识付费讲师', '在线教育机构', '企业内训'],
-  lastUpdated: '2025-12-31',
+  lastUpdated: '2026-02-19',
 };

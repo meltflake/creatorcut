@@ -73,5 +73,5 @@ export const xiaobaotong: Platform = {
     '功能较单一，无直播、社群等功能',
   ],
   bestFor: ['Newsletter 写作者', '独立创作者', '知识付费小而美专栏'],
-  lastUpdated: '2025-12-31',
+  lastUpdated: '2026-02-19',
 };

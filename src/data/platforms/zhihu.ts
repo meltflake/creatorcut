@@ -21,6 +21,7 @@ export const zhihu: Platform = {
       creatorCutMin: 30,
       creatorCutMax: 60,
       threshold: '盐选作者签约',
+      entryCost: '签约制',
       notes: '签约制，按有效点击量从会员池中分配',
       source: {
         type: 'media',
@@ -36,6 +37,7 @@ export const zhihu: Platform = {
       creatorCutMin: 50,
       creatorCutMax: 50,
       threshold: '盐选作者',
+      entryCost: '签约制',
       notes: '非会员用户单独购买专栏，平台抽 50%',
       source: {
         type: 'media',
@@ -51,6 +53,7 @@ export const zhihu: Platform = {
       creatorCutMin: 100,
       creatorCutMax: 100,
       threshold: '无门槛',
+      entryCost: '免费',
       notes: '平台不抽成',
       source: {
         type: 'official',
@@ -67,6 +70,7 @@ export const zhihu: Platform = {
       creatorCutMin: 70,
       creatorCutMax: 90,
       threshold: '等级+粉丝要求',
+      entryCost: '免费',
       notes: '专业内容导向，适合垂直领域',
       source: {
         type: 'media',
@@ -86,5 +90,5 @@ export const zhihu: Platform = {
     '平台商业化策略摇摆不定',
   ],
   bestFor: ['知识分享者', '专业领域作者', '深度图文创作者'],
-  lastUpdated: '2025-12-31',
+  lastUpdated: '2026-02-19',
 };
