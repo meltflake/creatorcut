@@ -25,7 +25,7 @@ export const ximalaya: Platform = {
       notes: '平台抽成较重，头部主播可谈到更好条件',
       source: {
         type: 'media',
-        name: '创作者反馈及行业报道',
+        name: '知乎专栏',
         url: 'https://zhuanlan.zhihu.com/p/718576793',
         date: '2025-12',
       },
@@ -33,8 +33,8 @@ export const ximalaya: Platform = {
     {
       type: 'subscription',
       name: '会员分成',
-      platformCut: '按收听时长比例分',
-      creatorCut: '按时长占比分配会员池（不含税）',
+      platformCut: '~60-80%',
+      creatorCut: '~20-40%（不含税）',
       creatorCutMin: 20,
       creatorCutMax: 40,
       threshold: '上架会员内容',
@@ -42,7 +42,7 @@ export const ximalaya: Platform = {
       notes: '类似 Spotify 模式，按收听时长在会员池中分配',
       source: {
         type: 'media',
-        name: '行业报道',
+        name: '界面新闻',
         url: 'https://www.jiemian.com/article/4846027.html',
         date: '2025-12',
       },
@@ -59,7 +59,7 @@ export const ximalaya: Platform = {
       notes: '按开播天数和月流水阶梯提升分成比例',
       source: {
         type: 'media',
-        name: '创作者反馈',
+        name: '南方都市报',
         url: 'https://m.mp.oeeee.com/a/BAAFRD000020200415302391.html',
         date: '2025-12',
       },
@@ -75,8 +75,8 @@ export const ximalaya: Platform = {
       entryCost: '签约制',
       notes: '固定时薪 80-100 元/小时，加上 10-25% 的销售分成',
       source: {
-        type: 'media',
-        name: '行业报道及录制者反馈',
+        type: 'official',
+        name: '喜马拉雅问答',
         url: 'https://m.ximalaya.com/ask/t646985',
         date: '2025-12',
       },

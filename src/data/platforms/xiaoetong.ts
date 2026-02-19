@@ -24,8 +24,8 @@ export const xiaoetong: Platform = {
       entryCost: '年费 6,800-25,800 元/年',
       notes: 'SaaS 工具模式，非分成模式。各版本赠送免抽佣额度：基础版 25 万、专业版 50 万、旗舰版 125 万。超出部分收取 2% 技术服务费。额度内创作者拿 100%',
       source: {
-        type: 'official',
-        name: '小鹅通官网 / 社群运营百科',
+        type: 'media',
+        name: '社群运营百科',
         url: 'https://www.ishequn.net/article/467',
         date: '2025-01',
       },
@@ -42,7 +42,7 @@ export const xiaoetong: Platform = {
       notes: '支持会员体系、付费圈子等多种订阅形态，抽佣规则与课程售卖一致',
       source: {
         type: 'official',
-        name: '小鹅通官网',
+        name: '小鹅通',
         url: 'https://www.xiaoet.cn/article/1878733522829115392',
         date: '2025-01',
       },
@@ -59,7 +59,7 @@ export const xiaoetong: Platform = {
       notes: '支持直播带货、实物商城。虚拟商品和实物商品的流水均计入年度额度',
       source: {
         type: 'official',
-        name: '小鹅通官网',
+        name: '小鹅通帮助',
         url: 'https://helpcenter.xiaoe-tech.com',
         date: '2025-01',
       },

@@ -16,8 +16,8 @@ export const xiaoyuzhou: Platform = {
     {
       type: 'subscription',
       name: '付费节目',
-      platformCut: '平台抽成（比例未公开）',
-      creatorCut: '大部分归创作者（不含税）',
+      platformCut: '~10-30%（估算）',
+      creatorCut: '~70-90%（不含税，估算）',
       creatorCutMin: 70,
       creatorCutMax: 90,
       threshold: '开通付费',
@@ -25,7 +25,7 @@ export const xiaoyuzhou: Platform = {
       notes: '早期阶段，具体分成比例未公开，据行业估算创作者拿大头',
       source: {
         type: 'estimate',
-        name: '行业估算',
+        name: 'CBNData',
         url: 'https://www.cbndata.com/information/293925',
         date: '2025-12',
       },
@@ -33,8 +33,8 @@ export const xiaoyuzhou: Platform = {
     {
       type: 'tipping',
       name: '打赏/赞助',
-      platformCut: '平台抽成',
-      creatorCut: '大部分归创作者（不含税）',
+      platformCut: '~10-30%（估算）',
+      creatorCut: '~70-90%（不含税，估算）',
       creatorCutMin: 70,
       creatorCutMax: 90,
       threshold: '无门槛',
@@ -42,7 +42,7 @@ export const xiaoyuzhou: Platform = {
       notes: '具体抽成比例未公开',
       source: {
         type: 'estimate',
-        name: '行业估算',
+        name: '人人都是产品经理',
         url: 'https://www.woshipm.com/evaluating/6213335.html',
         date: '2025-12',
       },

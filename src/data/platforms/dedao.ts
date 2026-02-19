@@ -25,7 +25,7 @@ export const dedao: Platform = {
       notes: '平台深度参与课程制作和推广，非自助上架',
       source: {
         type: 'media',
-        name: '行业报道',
+        name: '界面新闻',
         url: 'https://www.jiemian.com/article/1160543.html',
         date: '2025-12',
       },
@@ -42,7 +42,7 @@ export const dedao: Platform = {
       notes: '电子书分成相对友好',
       source: {
         type: 'media',
-        name: '行业报道',
+        name: '知乎专栏',
         url: 'https://zhuanlan.zhihu.com/p/28050744',
         date: '2025-12',
       },

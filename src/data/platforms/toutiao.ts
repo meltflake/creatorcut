@@ -24,8 +24,8 @@ export const toutiao: Platform = {
       entryCost: '免费',
       notes: '按阅读量+广告展示计算',
       source: {
-        type: 'media',
-        name: '创作者反馈',
+        type: 'official',
+        name: '头条创作百科',
         url: 'https://mp.toutiao.com/docs/baike/2789/20639/',
         date: '2025-12',
       },
@@ -33,8 +33,8 @@ export const toutiao: Platform = {
     {
       type: 'ads',
       name: '中视频伙伴计划',
-      platformCut: '统一池分配',
-      creatorCut: '按播放量+互动+完播率（不含税）',
+      platformCut: '~30-50%',
+      creatorCut: '~50-70%（不含税）',
       creatorCutMin: 50,
       creatorCutMax: 70,
       threshold: '申请加入',
@@ -42,7 +42,7 @@ export const toutiao: Platform = {
       notes: '与抖音中视频计划打通，按播放量、互动率、完播率综合分配',
       source: {
         type: 'official',
-        name: '头条创作者平台',
+        name: '头条创作平台',
         url: 'https://mp.toutiao.com/docs/mp',
         date: '2025-12',
       },

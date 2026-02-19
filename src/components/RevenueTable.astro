@@ -44,13 +44,32 @@ function entryCostColor(cost: string | undefined): string {
   return 'var(--peach)';
 }
 
+// One-line insight per revenue type (generated from actual data)
+const revenueInsights: Record<string, string> = {
+  subscription: '微信公众号 0% 抽成最友好；喜马拉雅 60-80% 抽成最重',
+  tipping: '微信公众号/知乎赞赏 0% 抽成；快手打赏 70% 到手最高',
+  ecommerce: '技术服务费普遍 1-5%，核心差异在商家设定的佣金比例',
+  ads: 'B站广告分成 2025 年从 40% 降至 25%，创作激励上限 2000 元/月',
+  sponsorship: '小红书蒲公英博主端 0 抽佣，品牌方承担全部服务费',
+  course: '小鹅通额度内 0 抽成但需年费；得到邀约制 ~50% 分成',
+  newsletter: '小报童 15% 服务费 + ~6% 提现费，实际到手约 79%',
+  affiliate: '小报童分销佣金 0 抽成，作者自设比例全额到账',
+  'digital-goods': '爱发电仅 6% 抽成；得到电子书 ~70% 到手',
+};
+const insight = revenueInsights[revenueType] || '';
+
 const tableId = `revenue-table-${tableIndex}`;
 ---
 
 <div class="revenue-section" style="margin-bottom: 2rem;">
-  <h3 style="color: var(--yellow); font-size: 1rem; margin-bottom: 0.5rem; font-family: monospace;">
+  <h3 style="color: var(--yellow); font-size: 1rem; margin-bottom: 0.25rem; font-family: monospace;">
     $ cat {revenueType}.csv <span style="color: var(--foreground2); font-size: 0.8rem; font-weight: normal; margin-left: 0.5rem;">// {label}</span>
   </h3>
+  {insight && (
+    <p style="color: var(--foreground2); font-size: 0.78rem; margin: 0 0 0.5rem 0; font-family: monospace;">
+      <span style="color: var(--surface2);">// </span>{insight}
+    </p>
+  )}
   
   <div class="table-wrap">
     <table id={tableId} class="revenue-table" style="width: 100%; font-size: 0.85rem;">
@@ -80,7 +99,7 @@ const tableId = `revenue-table-${tableIndex}`;
             data-founded={p.foundedYear || 0}
           >
             <td>
-              <a href={`${base}platform/${p.id}`} style="color: var(--green); font-weight: 500; white-space: nowrap;">
+              <a href={`${base}/platform/${p.id}`} style="color: var(--green); font-weight: 500; white-space: nowrap;">
                 {p.name}
               </a>
             </td>

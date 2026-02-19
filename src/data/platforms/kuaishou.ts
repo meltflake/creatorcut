@@ -25,7 +25,7 @@ export const kuaishou: Platform = {
       notes: '行业内较高水平，个人主播统一 70%',
       source: {
         type: 'media',
-        name: '行业报道及创作者反馈',
+        name: '界面新闻',
         url: 'https://www.jiemian.com/article/5310425.html',
         date: '2025-12',
       },
@@ -42,7 +42,7 @@ export const kuaishou: Platform = {
       notes: '信任电商，复购率高；平台收取技术服务费',
       source: {
         type: 'official',
-        name: '快手电商官方',
+        name: '快手帮助',
         url: 'https://www.kuaishou.com/help/feedback/2767?categoryId=hot',
         date: '2025-12',
       },
@@ -58,8 +58,8 @@ export const kuaishou: Platform = {
       entryCost: '免费',
       notes: '下沉市场品牌多',
       source: {
-        type: 'media',
-        name: '行业报道',
+        type: 'official',
+        name: '磁力聚星',
         url: 'https://k.kuaishou.com',
         date: '2025-12',
       },

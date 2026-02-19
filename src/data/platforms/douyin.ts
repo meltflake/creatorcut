@@ -25,7 +25,7 @@ export const douyin: Platform = {
       notes: '个人主播基础 50%；公会主播 45-55%（含公会分成后），公会基础 45%，任务加成最高 55%',
       source: {
         type: 'media',
-        name: '行业报道及创作者反馈',
+        name: '界面新闻',
         url: 'https://www.jiemian.com/article/5310425.html',
         date: '2025-12',
       },
@@ -42,7 +42,7 @@ export const douyin: Platform = {
       notes: '精选联盟撮合，规模最大；平台收技术服务费，佣金由商家设定',
       source: {
         type: 'official',
-        name: '抖音电商官方',
+        name: '抖音电商',
         url: 'https://www.douyinec.com',
         date: '2025-12',
       },
@@ -59,7 +59,7 @@ export const douyin: Platform = {
       notes: '按播放量分成，需发布横版中视频',
       source: {
         type: 'media',
-        name: '创作者反馈及行业估算',
+        name: '极客公园',
         url: 'https://www.geekpark.net/news/280121',
         date: '2025-12',
       },
@@ -76,7 +76,7 @@ export const douyin: Platform = {
       notes: '规模最大的商单撮合平台，MCN 深度参与',
       source: {
         type: 'official',
-        name: '巨量星图',
+        name: '星图',
         url: 'https://star.toutiao.com',
         date: '2025-12',
       },

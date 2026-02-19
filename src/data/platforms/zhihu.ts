@@ -16,8 +16,8 @@ export const zhihu: Platform = {
     {
       type: 'subscription',
       name: '盐选专栏（会员分成）',
-      platformCut: '按有效点击分成',
-      creatorCut: '按阅读量分配会员收入池（不含税）',
+      platformCut: '~40-70%',
+      creatorCut: '~30-60%（不含税）',
       creatorCutMin: 30,
       creatorCutMax: 60,
       threshold: '盐选作者签约',
@@ -25,7 +25,7 @@ export const zhihu: Platform = {
       notes: '签约制，按有效点击量从会员池中分配',
       source: {
         type: 'media',
-        name: '知乎盐选作者反馈',
+        name: '知乎专栏',
         url: 'https://zhuanlan.zhihu.com/p/614536709',
         date: '2025-12',
       },
@@ -42,7 +42,7 @@ export const zhihu: Platform = {
       notes: '非会员用户单独购买专栏，平台抽 50%',
       source: {
         type: 'media',
-        name: '知乎创作者反馈',
+        name: '知乎回答',
         url: 'https://www.zhihu.com/question/551563502/answer/3153556903',
         date: '2025-12',
       },
@@ -67,8 +67,8 @@ export const zhihu: Platform = {
     {
       type: 'sponsorship',
       name: '品牌特邀/知+',
-      platformCut: '平台抽佣',
-      creatorCut: '按合作协议（不含税）',
+      platformCut: '~10-30%',
+      creatorCut: '~70-90%（不含税）',
       creatorCutMin: 70,
       creatorCutMax: 90,
       threshold: '等级+粉丝要求',
@@ -76,7 +76,7 @@ export const zhihu: Platform = {
       notes: '专业内容导向，适合垂直领域',
       source: {
         type: 'media',
-        name: '行业报道',
+        name: '数透',
         url: 'https://www.st-lt.com/402.html',
         date: '2025-12',
       },

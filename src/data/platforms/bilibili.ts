@@ -17,7 +17,7 @@ export const bilibili: Platform = {
       type: 'ads',
       name: '创作激励（基础激励）',
       platformCut: '平台发放奖金池',
-      creatorCut: '最高 2000 元/月',
+      creatorCut: '最高 2000 元/月（不含税）',
       creatorCutMin: 0,
       creatorCutMax: 100,
       threshold: '电磁力达标',
@@ -25,7 +25,7 @@ export const bilibili: Platform = {
       notes: '2024 年激励上限设为 2000 元/月，中小 UP 主收入骤降',
       source: {
         type: 'official',
-        name: 'B 站创作中心',
+        name: 'B站创作中心',
         url: 'https://member.bilibili.com',
         date: '2025-12',
       },
@@ -42,7 +42,7 @@ export const bilibili: Platform = {
       notes: '2025 年从 40% 下调到 25%，引发争议',
       source: {
         type: 'media',
-        name: '行业报道',
+        name: '腾讯新闻',
         url: 'https://news.qq.com/rain/a/20250524A047PE00',
         date: '2025-12',
       },
@@ -59,7 +59,7 @@ export const bilibili: Platform = {
       notes: '非直播打赏，类似订阅支持',
       source: {
         type: 'official',
-        name: 'B 站充电计划',
+        name: 'B站充电协议',
         url: 'https://www.bilibili.com/html/charge_plan_user_agreement.html',
         date: '2025-12',
       },
@@ -75,8 +75,8 @@ export const bilibili: Platform = {
       entryCost: '免费',
       notes: '直播打赏分成中等偏低',
       source: {
-        type: 'media',
-        name: '创作者反馈',
+        type: 'official',
+        name: 'B站直播帮助',
         url: 'https://link.bilibili.com/p/help/index',
         date: '2025-12',
       },
@@ -93,7 +93,7 @@ export const bilibili: Platform = {
       notes: '年轻人品牌，单价较高',
       source: {
         type: 'official',
-        name: 'B 站花火平台',
+        name: 'B站花火',
         url: 'https://huahuo.bilibili.com',
         date: '2025-12',
       },
@@ -101,8 +101,8 @@ export const bilibili: Platform = {
     {
       type: 'ecommerce',
       name: '悬赏带货',
-      platformCut: '平台技术服务费',
-      creatorCut: '佣金由商家设定（不含税）',
+      platformCut: '技术服务费 ~1-5%',
+      creatorCut: '佣金 10-30%（不含税，商家设定）',
       creatorCutMin: 10,
       creatorCutMax: 30,
       threshold: '开通带货',
@@ -110,7 +110,7 @@ export const bilibili: Platform = {
       notes: '大开环模式，跳转淘宝/京东',
       source: {
         type: 'media',
-        name: '行业报道',
+        name: '人人都是产品经理',
         url: 'https://www.woshipm.com/pd/5927659.html',
         date: '2025-12',
       },

@@ -25,7 +25,7 @@ export const xiaobaotong: Platform = {
       notes: '适合与读者建立长期关系。订阅自动到期提醒。提现时另有云账户约 6% 服务费 + 个税代扣（非平台收取）',
       source: {
         type: 'official',
-        name: '小报童官方帮助文档',
+        name: '小报童帮助',
         url: 'https://help.xiaobot.net/withdraw.html',
         date: '2025-12',
       },
@@ -42,7 +42,7 @@ export const xiaobaotong: Platform = {
       notes: '适合把知识广泛持续传播。一次购买永久阅读。每个创作者可开通多个专栏',
       source: {
         type: 'official',
-        name: '小报童官方帮助文档',
+        name: '小报童帮助',
         url: 'https://help.xiaobot.net/',
         date: '2025-12',
       },
@@ -51,7 +51,7 @@ export const xiaobaotong: Platform = {
       type: 'affiliate',
       name: '合伙人分销',
       platformCut: '0%（分销收入不抽成）',
-      creatorCut: '由作者设定分销比例',
+      creatorCut: '50-100%（不含税，由作者设定）',
       creatorCutMin: 50,
       creatorCutMax: 100,
       threshold: '作者开通合伙人计划',
@@ -59,7 +59,7 @@ export const xiaobaotong: Platform = {
       notes: '分销者获得的佣金不收取平台服务费，全额进入钱包',
       source: {
         type: 'official',
-        name: '小报童官方帮助文档',
+        name: '小报童帮助',
         url: 'https://help.xiaobot.net/',
         date: '2025-12',
       },
