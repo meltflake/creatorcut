@@ -77,6 +77,7 @@ export const zhihu: Platform = {
       source: {
         type: 'media',
         name: '行业报道',
+        url: 'https://www.st-lt.com/402.html',
         date: '2025-12',
       },
     },

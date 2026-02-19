@@ -60,6 +60,7 @@ export const xiaoetong: Platform = {
       source: {
         type: 'official',
         name: '小鹅通官网',
+        url: 'https://helpcenter.xiaoe-tech.com',
         date: '2025-01',
       },
     },
