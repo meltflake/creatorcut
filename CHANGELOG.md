@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.2.1 (2026-02-20)
+
+- 修复对比页产品选择框 `[ ]` 显示异常：移除固定宽度，添加 `font-family: monospace` 和 `white-space: nowrap`，确保方括号紧凑显示
+
 ## v0.2.0 (2026-02-19)
 
 - 新增 18 个海外产品（YouTube, TikTok, Twitch, Patreon, Substack, Ghost, Beehiiv, Kit, Gumroad, Lemon Squeezy, Teachable, Kajabi, Spotify, Apple Podcasts, X, Instagram, Buy Me a Coffee, Ko-fi）
